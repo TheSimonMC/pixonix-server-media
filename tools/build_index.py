@@ -24,6 +24,11 @@ for path in sorted((ROOT/'minecraft_servers').glob('*/manifest.json')):
     source = json.loads(path.read_text(encoding='utf-8-sig'))
     addresses = list(dict.fromkeys([source['direct_ip'], *source.get('server_wildcards', [])]))
     row = dict(id=path.parent.name, name=source.get('nice_name', path.parent.name), addresses=addresses)
+    if 'tab_width' in source:
+        width = source['tab_width']
+        if type(width) is not int or not 80 <= width <= 250:
+            raise ValueError(f'Invalid tab_width: {path}')
+        row['tabWidth'] = width
     for key, names in {
         'icon': ['icon@2x.png', 'icon.png'],
         'banner': ['banner.png'],

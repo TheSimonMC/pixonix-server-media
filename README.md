@@ -32,6 +32,8 @@ Use transparent PNGs for icons and banners where appropriate. TAB banners work b
 
 A server without `banner.png` gets no extra TAB image. The client does not create a replacement from its background and logo. Server-list backgrounds use the upper part of the image. The server's own MOTD, player-list header and footer remain intact.
 
+To change a TAB banner's size, add `"tab_width": 150` to that server's manifest. Values from 80 to 250 are accepted, in Minecraft GUI units; the default is 250. Its height scales with its width. Supported by Client 2.9.7 and Mod 1.2.5 or newer. Size changes then arrive with the index update, without another client build.
+
 ## Updates and cache
 
 PIXONIX downloads the index over HTTPS and loads artwork as needed. SHA-256 checks protect the local image cache. Repository updates do not require a new client build.

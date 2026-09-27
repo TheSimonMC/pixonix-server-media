@@ -2,6 +2,7 @@
   "server_name": "pitschonix",
   "nice_name": "Pitschonix.eu",
   "direct_ip": "pitschonix.eu",
+  "tab_width": 150,
   "server_wildcards": [
     "%.pitschonix.eu"
   ],
