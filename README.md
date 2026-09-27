@@ -1,18 +1,12 @@
 # PIXONIX Server Media
 
-Server icons, banners and address mappings for PIXONIX Client and PIXONIX Mod.
-
-The initial collection comes from [LabyMod/server-media](https://github.com/LabyMod/server-media), also referenced by [TheSimonMC/server-media](https://github.com/TheSimonMC/server-media). Original files are preserved in `minecraft_servers`. The imported revision is recorded in `UPSTREAM.json`.
-
-Images identify their respective servers. Names, logos and trademarks belong to their owners. Inclusion does not imply a partnership or endorsement. The original [notices](docs/UPSTREAM-README.md#trademark-legal-notices) remain applicable. This repository does not grant new rights to third-party artwork.
+Server icons, backgrounds and TAB banners for PIXONIX Client and PIXONIX Mod.
 
 ## Add or update a server
 
-1. Create `minecraft_servers/yourserver/manifest.json` with `server_name`, `nice_name`, `direct_ip` and optional `server_wildcards`.
-2. Add `icon.png` or `icon@2x.png`. Optional files: `banner.png`, `background.png`, `background@2x.png`, `logo.png`, `logo@2x.png`.
-3. Run `python tools/build_index.py` and commit `index.json` together with the source files.
-
-Example:
+1. Create `minecraft_servers/yourserver/manifest.json`.
+2. Add the PNG files listed below.
+3. Run `python tools/build_index.py` and commit the files together with `index.json`.
 
 ```json
 {
@@ -23,12 +17,29 @@ Example:
 }
 ```
 
-Use PNG images. An actual banner should have a wide aspect ratio, ideally 5:1. Only submit artwork you are allowed to provide. See the preserved [file guide](docs/upstream/Files.md) for the upstream layout.
+The folder name must match `server_name`. Wildcards match whole domain labels, so `%.example.net` also covers `play.example.net`.
 
-## Client behavior
+## Images
 
-PIXONIX reads `index.json` over HTTPS and downloads only images needed for visible servers. Files are checked against their SHA-256 hashes and cached locally. Updates to this repository become available without rebuilding the client. A cached index is refreshed after one hour; failed refreshes retain the previous working data.
+| File | Used for |
+| --- | --- |
+| `icon.png` or `icon@2x.png` | Square icon in the server list |
+| `background.png` or `background@2x.png` | Background behind the server-list entry |
+| `banner.png` | Banner above the TAB player list |
+| `logo.png` or `logo@2x.png` | Optional server logo retained in the catalogue |
 
-The server list uses the custom icon and banner/background. The Tab player list shows the banner above the server's existing header. If no banner exists, PIXONIX can compose a header from the existing background and logo. Missing images leave Minecraft's normal display intact. The Server Media module can be disabled, with separate switches for icons, list banners and Tab banners.
+Use transparent PNGs for icons and banners where appropriate. TAB banners work best at 5:1. The `@2x` files take priority when available. Files may be up to 4096 pixels per side, 8 megapixels and 16 MiB.
 
-The collection never adds servers to a player's saved list, changes connection addresses, executes commands or sends account credentials. GitHub receives ordinary image/index requests, not the player's complete server list.
+A server without `banner.png` gets no extra TAB image. The client does not create a replacement from its background and logo. Server-list backgrounds use the upper part of the image. The server's own MOTD, player-list header and footer remain intact.
+
+## Updates and cache
+
+PIXONIX downloads the index over HTTPS and loads artwork as needed. SHA-256 checks protect the local image cache. Repository updates do not require a new client build.
+
+The client checks the index on first use and when Multiplayer is opened or refreshed, at most once per minute. It also checks hourly while in use. Existing cached data remains available if a request fails. Hosting caches can delay a new repository update by a few minutes.
+
+Server Media can be switched off, with separate controls for icons, list backgrounds and TAB banners. It does not add saved servers, change connection addresses, execute commands or send Minecraft credentials.
+
+## Image ownership
+
+Server names, logos and trademarks belong to their respective owners. Images identify those servers and do not imply endorsement or partnership. This repository grants no additional rights to third-party artwork. Submit only files you have permission to provide.
