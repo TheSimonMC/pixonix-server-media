@@ -1,0 +1,20 @@
+{
+    "server_name": "universocraft",
+    "nice_name": "UniversoCraft",
+    "direct_ip": "mc.universocraft.com",
+    "server_wildcards": [
+      "%.universocraft.com"
+    ],
+    "supported_languages": [
+      "es"
+    ],
+    "user_stats": "https://stats.universocraft.com/stats.php?player={userName}",
+    "party": {
+        "invite": "/fiesta invitar {userName}",
+        "accept": "/fiesta aceptar {userName}",
+        "leave": "/fiesta salir",
+        "kick": "/fiesta expulsar {userName}",
+        "transfer": "/fiesta lider {userName}"
+    }
+  }
+  

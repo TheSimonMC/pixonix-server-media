@@ -1,0 +1,50 @@
+{
+    "server_name": "primeblocks",
+    "nice_name": "PrimeBlocks",
+    "direct_ip": "primeblocks.net",
+    "server_wildcards": [
+    "%.besterserverderwelt.net",
+    "%.besterserverderwelt.de"
+    ],
+    "supported_languages": [
+       "de"
+    ],
+    "social": {
+      "web_shop": "https://store.primeblocks.net",
+      "web_support": "https://wiki.primeblocks.net",
+      "discord": "https://discord.gg/primeblocks",
+      "instagram": "primeblocksnet",
+      "youtube": "https://www.youtube.com/@primeblocks_net"
+    },
+    "gamemodes": {
+      "cb1": {
+        "name": "CityBuild-1",
+        "color": "#E8B50F",
+        "command": "/servers cb1"
+      },
+      "cb2": {
+        "name": "CityBuild-2",
+        "color": "#E8B50F",
+        "command": "/servers cb2"
+      },
+      "cb3": {
+        "name": "CityBuild-3",
+        "color": "#E8B50F",
+        "command": "/servers cb3"
+      },
+       "creative": {
+        "name": "Creative",
+        "color": "#54FFFF"
+      }
+    },
+    "discord": {
+      "server_id": 1105538669999296584,
+      "rename_to_minecraft_name": false
+    },
+    "location": {
+      "city": "Frankfurt",
+      "country": "Germany",
+      "country_code": "DE"
+    },
+    "yt_trailer": "eMDDvSUXZY8"
+}
