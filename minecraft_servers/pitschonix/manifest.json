@@ -1,0 +1,16 @@
+{
+  "server_name": "pitschonix",
+  "nice_name": "Pitschonix.eu",
+  "direct_ip": "pitschonix.eu",
+  "server_wildcards": [
+    "%.pitschonix.eu"
+  ],
+  "social": {
+    "web": "https://pitschonix.eu"
+  },
+  "brand": {
+    "primary": "#AA00AA",
+    "background": "#100519",
+    "text": "#FFFF55"
+  }
+}
