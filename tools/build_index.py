@@ -21,8 +21,12 @@ def image(folder, names):
 
 servers = []
 for path in sorted((ROOT/'minecraft_servers').glob('*/manifest.json')):
+    if path.parent.name not in {'pitschonix', 'pixonix_attack'}:
+        continue
     source = json.loads(path.read_text(encoding='utf-8-sig'))
-    addresses = list(dict.fromkeys([source['direct_ip'], *source.get('server_wildcards', [])]))
+    addresses = [source['direct_ip']]
+    if addresses[0] not in {'pitschonix.eu', 'attack.pitschonix.eu'}:
+        raise ValueError(f'Unexpected bundled server: {path}')
     row = dict(id=path.parent.name, name=source.get('nice_name', path.parent.name), addresses=addresses)
     if 'tab_width' in source:
         width = source['tab_width']
