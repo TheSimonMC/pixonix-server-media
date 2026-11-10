@@ -31,4 +31,4 @@ For the icon, background and logo you can also supply an `@2x.png` version, such
 
 A **Quick Join** connects through Minecraftâ€™s multiplayer connection screen. For example, a mapping for `example.net` can offer **Duels** at `duels.example.net`. Configure your server or proxy to route that hostname to Duels. Each mapping supports up to 12 destinations on its listed hosts or their subdomains.
 
-**Mod rules** can restrict Shield Status, Hit Range, Stretched Res, Fly Speed, Fullbright, Freelook and Health Indicator. Select a mod to disable it, or expand its settings to restrict a single switch. All other mods stay under the player’s control. When a player disconnects, their own settings apply again.
+**Mod rules** can restrict Shield Status, Hit Range, Stretched Res, Fly Speed, Fullbright, Freelook and Health Indicator. Check a mod to disable it. For Fullbright, choose **Player’s choice**, **Night Vision only** or **Disable Fullbright**. Night Vision only uses that mode while Fullbright is active on your server. All other mods stay under the player’s control. When a player disconnects, their own settings apply again.

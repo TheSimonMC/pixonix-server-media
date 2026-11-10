@@ -7,26 +7,14 @@
     "description": "Shows health above nearby living entities."
   },
   {
-    "options": {
-      "highlight": "Highlight in range",
-      "nearest": "Nearest player only",
-      "random_colors": "Color per player",
-      "self": "Show own circle"
-    },
+    "options": {},
     "category": "Visual",
     "name": "Hit Range",
     "id": "hit_range",
     "description": "Draws a ring showing how far a player can reach with an attack."
   },
   {
-    "options": {
-      "blocking": "Tint while blocking",
-      "disabled": "Tint disabled shield",
-      "fade": "Fade during cooldown",
-      "own_only": "Only my shield",
-      "raising": "Tint while raising",
-      "ready": "Tint ready shield"
-    },
+    "options": {},
     "category": "Visual",
     "name": "Shield Status",
     "id": "shield_status",
@@ -34,8 +22,7 @@
   },
   {
     "options": {
-      "active": "Fullbright",
-      "use_keybind": "Use keybind"
+      "gamma": "Gamma"
     },
     "category": "Visual",
     "name": "Fullbright",
@@ -50,13 +37,7 @@
     "description": "Adjusts flight speed when the player can already fly."
   },
   {
-    "options": {
-      "animation": "Camera transition",
-      "invert": "Invert vertical movement",
-      "toggle": "Toggle instead of hold",
-      "transition_in": "In transition",
-      "transition_out": "Out transition"
-    },
+    "options": {},
     "category": "Movement",
     "name": "Freelook",
     "id": "freelook",

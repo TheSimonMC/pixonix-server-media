@@ -71,8 +71,6 @@ input::file-selector-button {color:var(--text);background:#37303f;border:0;paddi
 .rulehead img {width:32px;height:32px;image-rendering:pixelated}
 .rulehead small {line-height:1.35}
 .rulehead input {width:18px;height:18px}
-.rule details {margin:10px 0 0 44px;font-size:13px}
-.ruleOptions {padding:6px 0}
-.check {font-weight:400;padding:2px 0}
+@media(max-width:480px){.rulehead select{grid-column:2/-1;width:100%}}
 @media(max-width:850px){.workspace{grid-template-columns:1fr}aside{position:static}.wrap{max-width:700px}}
 @media(max-width:480px){.wrap{width:94%}.brand{gap:7px}.mast{font-size:13px}.brand span{display:none}.heading{align-items:flex-start;flex-direction:column;gap:12px}.primary{width:100%;justify-content:center}nav button{flex-direction:column;font-size:12px;gap:2px;padding:8px 2px}.previewhead{padding:10px}.previewhead h2{font-size:15px}.mode label{flex-basis:100%}}

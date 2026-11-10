@@ -72,17 +72,35 @@ $("add").onclick=()=>{
   const remove=make("button","Remove");remove.onclick=()=>{row.remove();$("add").disabled=false;preview();};row.append(remove);$("joins").append(row);
   $("add").disabled=$("joins").children.length===12;$("source").value="draft";$("view").value="Quick Joins";row.querySelector("input").focus();preview();
 };
-function check(key,label){
-  const el=make("label"), box=make("input");el.className="check";box.type="checkbox";box.checked=denied.has(key);
-  box.onchange=()=>box.checked?denied.add(key):denied.delete(key);el.append(box,document.createTextNode(" "+label));return el;
+function ruleControl(mod) {
+  if (mod.id === "fullbright") {
+    const mode = make("select");
+    mode.setAttribute("aria-label", "Fullbright rule");
+    for (const [value, label] of [["allow", "Player's choice"], ["night", "Night Vision only"], ["off", "Disable Fullbright"]]) {
+      const option = make("option", label);
+      option.value = value;
+      mode.append(option);
+    }
+    mode.value = denied.has("fullbright") ? "off" : denied.has("fullbright.gamma") ? "night" : "allow";
+    mode.onchange = () => {
+      denied.delete("fullbright");
+      denied.delete("fullbright.gamma");
+      if (mode.value === "off") denied.add("fullbright");
+      if (mode.value === "night") denied.add("fullbright.gamma");
+    };
+    return mode;
+  }
+  const toggle = make("input");
+  toggle.type = "checkbox";
+  toggle.checked = denied.has(mod.id);
+  toggle.setAttribute("aria-label", "Disable " + mod.name);
+  toggle.onchange = () => toggle.checked ? denied.add(mod.id) : denied.delete(mod.id);
+  return toggle;
 }
 function policies(){
   const query=$("filter").value.trim().toLowerCase(), list=$("policy");list.replaceChildren();
   for(const m of modules??[]){
-    const options=Object.entries(m.options);
-    const match=[m.name,m.id,m.category,m.description].some(text=>text.toLowerCase().includes(query));
-    const found=options.filter(([key,label])=>match || (key+" "+label).toLowerCase().includes(query));
-    if(!match&&!found.length)continue;
+    if (![m.name,m.id,m.category,m.description].some(text=>text.toLowerCase().includes(query))) continue;
     let section = list.querySelector('[data-category="' + m.category + '"]');
     if (!section) {
       section = make("section");
@@ -90,22 +108,12 @@ function policies(){
       section.append(make("h3",m.category));
       list.append(section);
     }
-    const card = make("article"), head = make("label"), info = make("span"), icon = make("img"), toggle = make("input");
+    const card = make("article"), head = make("label"), info = make("span"), icon = make("img");
     card.className = "rule"; head.className = "rulehead";
     icon.src = "assets/" + m.id + ".png"; icon.alt = "";
-    toggle.type = "checkbox"; toggle.checked = denied.has(m.id);
-    toggle.setAttribute("aria-label","Disable " + m.name);
-    toggle.onchange = () => toggle.checked ? denied.add(m.id) : denied.delete(m.id);
     info.append(make("strong", m.name),make("small",m.description));
-    head.append(icon,info,toggle); card.append(head);
-    if (found.length) {
-      const details = make("details"), body = make("div");
-      details.open = Boolean(query && !match);
-      body.className = "ruleOptions";
-      for (const [key,title] of found) body.append(check(m.id+"."+key,title));
-      details.append(make("summary","Individual settings ("+found.length+")"),body);
-      card.append(details);
-    }
+    head.append(icon,info,ruleControl(m));
+    card.append(head);
     section.append(card);
   }
   if(modules&&!list.childElementCount)list.append(make("p","No matching mods."));

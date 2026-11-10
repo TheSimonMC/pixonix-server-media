@@ -13,7 +13,7 @@ class MappingTests(unittest.TestCase):
         self.root = Path(temp.name)
         self.mapping = dict(server_name="oak",nice_name="Oak",direct_ip="oak.example",
                             quick_joins=[dict(name="Duels",address="duels.oak.example")],
-                            policy=dict(version=1,modules={"freelook":False},options={"hit_range.highlight":False}))
+                            policy=dict(version=1,modules={"freelook":False},options={"fullbright.gamma":False}))
         self.folder = self.root/"minecraft_servers"/"oak"
         self.folder.mkdir(parents=True)
 
@@ -27,7 +27,7 @@ class MappingTests(unittest.TestCase):
         row = self.index()
         self.assertEqual(row["icon"]["width"],32)
         self.assertEqual(row["quickJoins"][0]["address"],"duels.oak.example")
-        self.assertFalse(row["policy"]["options"]["hit_range.highlight"])
+        self.assertFalse(row["policy"]["options"]["fullbright.gamma"])
 
     def test_no_duplicate_or_wildcard_addresses(self):
         for alias in ["oak.example:25565","*.oak.example"]:
@@ -45,7 +45,7 @@ class MappingTests(unittest.TestCase):
             self.index()
 
     def test_protected_mods_and_options(self):
-        for section,key in [("modules","zoom"),("modules","server_media"),("modules","social_wheel"),("options","zoom.scroll")]:
+        for section,key in [("modules","zoom"),("modules","server_media"),("modules","social_wheel"),("options","zoom.scroll"),("options","hit_range.highlight"),("options","freelook.toggle"),("options","shield_status.ready"),("options","fullbright.active"),("options","fullbright.use_keybind")]:
             with self.subTest(key=key):
                 self.mapping["policy"] = {"version":1,"modules":{},section:{key:False}}
                 with self.assertRaises(ValueError):
