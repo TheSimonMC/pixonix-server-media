@@ -1,10 +1,10 @@
 name: Server mappings
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '27 * * * *'
 
 permissions:
   contents: read
@@ -14,40 +14,41 @@ jobs:
     name: Validate mappings
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      deploy: ${{ steps.release.outputs.deploy }}
     steps:
       - uses: actions/checkout@v4
         with:
-          path: candidate
-          persist-credentials: false
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.sha || github.sha }}
-          path: validator
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: python -m pip install Pillow==12.2.0
-      - name: Check submissions with the trusted validator
+      - name: Check mappings and build the client catalog
         run: |
-          scripts=validator/.github/scripts
-          if [ ! -d "$scripts" ]; then scripts=validator/tools; fi
-          python -m unittest discover -s "$scripts"
-          python -I "$scripts/build_index.py" --root candidate --output "$RUNNER_TEMP/index.json"
-      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+          python -m unittest discover -s .github/scripts
+          python -I .github/scripts/build_index.py --output "$RUNNER_TEMP/index.json"
+      - id: release
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != schedule ] || [ "$(curl -fsSL --max-time 15 https://thesimonmc.github.io/pixonix-server-media/revision.txt || true)" != "$GITHUB_SHA" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.release.outputs.deploy == 'true'
         run: |
           mkdir public
-          cp -r candidate/docs/. public/
-          cp -r candidate/minecraft_servers public/
+          cp -r docs/. public/
+          cp -r minecraft_servers public/
           cp "$RUNNER_TEMP/index.json" public/index.json
-      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+          echo "$GITHUB_SHA" > public/revision.txt
+      - if: steps.release.outputs.deploy == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
   publish:
     name: Publish editor and catalog
     needs: validate
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: needs.validate.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     permissions:
       pages: write

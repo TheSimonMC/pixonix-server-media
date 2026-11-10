@@ -1,0 +1,81 @@
+name: Review server submissions
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review, edited]
+
+permissions: {}
+concurrency:
+  group: submission-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: checker
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install Pillow==12.2.0
+      - name: Read mapping files from the submission
+        env:
+          NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git init --quiet candidate
+          git -C candidate fetch --no-tags --depth=1 "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git" "refs/pull/$NUMBER/head"
+          test "$(git -C candidate rev-parse FETCH_HEAD)" = "$HEAD_SHA"
+          # Materialize only the data directory. The validator always runs from the base commit.
+          git -C candidate checkout FETCH_HEAD -- minecraft_servers
+          python -I checker/.github/scripts/build_index.py --root candidate
+
+  result:
+    if: always() && !cancelled()
+    needs: inspect
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Report the result on the submitted commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RESULT: ${{ needs.inspect.result }}
+        run: |
+          state=failure
+          if [ "$RESULT" = success ]; then state=success; fi
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -X POST \
+            -f context='Validate mappings' -f state="$state" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+  queue:
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.fork
+    needs: [inspect, result]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Queue mapping submissions for merge after owner approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          FILE_COUNT=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$NUMBER" --jq .changed_files)
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/pulls/$NUMBER/files?per_page=100" > files.json
+          if jq -e --argjson count "$FILE_COUNT" '
+            flatten | length == $count and length > 0 and
+            all(.[]; (.filename | startswith("minecraft_servers/")) and
+              ((.previous_filename // .filename) | startswith("minecraft_servers/")))
+          ' files.json > /dev/null; then
+            gh pr merge "$NUMBER" --repo "$GITHUB_REPOSITORY" --squash --auto --match-head-commit "$HEAD_SHA"
+          fi

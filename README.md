@@ -12,7 +12,9 @@ A server mapping tells Pixonix which artwork to show when a player saves your Mi
 4. [Fork this repository](https://github.com/TheSimonMC/pixonix-server-media/fork). Extract the ZIP and add its `minecraft_servers/<your_id>/` folder at the same location in your fork. For an update, replace the files in your existing folder and remove any artwork you have retired.
 5. [Open a pull request](https://github.com/TheSimonMC/pixonix-server-media/compare). Include a public link that lets the reviewer verify your connection to the server. Submit only artwork you have permission to publish.
 
-GitHub checks the manifest, images, addresses, Quick Joins and mod rules. The repository owner reviews submissions and destination ownership before merging. After a merge, GitHub Pages publishes the editor, images and [client catalog](https://thesimonmc.github.io/pixonix-server-media/index.json) together. Compatible clients check for changes every 24 hours while running and can use the previous catalog offline.
+GitHub checks your manifest, PNGs, addresses, Quick Joins and mod rules. If a check fails, open its log, fix the reported file and push the change to the same branch in your fork. The pull request updates automatically.
+
+Once the checks pass, the owner verifies that you represent the server and reviews your artwork and destinations. Mapping-only submissions merge automatically after the owner approves the current revision and all branch requirements pass. GitHub Pages publishes the editor, images and [client catalog](https://thesimonmc.github.io/pixonix-server-media/index.json) together. Compatible clients check for changes every 24 hours while running and can use the previous catalog offline.
 
 ## Artwork
 
