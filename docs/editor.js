@@ -119,7 +119,10 @@ $("name").addEventListener("input", () => {
   if (!customSlug) $("slug").value = $("name").value.toLowerCase().normalize("NFKD")
     .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,64);
 });
-document.addEventListener("input",preview);
+document.addEventListener("input",event=>{
+  if (event.target.closest("#identity, #modes, #art")) $("source").value="draft";
+  preview();
+});
 function addr(raw){
   const label="[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?",s=raw.trim().toLowerCase();
   const m=s.match(new RegExp("^("+label+"(?:\\."+label+")+)(?::([1-9][0-9]{0,4}))?$"));
