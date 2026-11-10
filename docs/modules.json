@@ -1,1 +1,72 @@
-[{"options":{"active":"Cinematic mode","hide_crosshair":"Hide crosshair","hide_widgets":"Hide client widgets","use_keybind":"Use keybind"},"category":"Visual","name":"Cinematic","id":"cinematic_bars"},{"options":{},"category":"Visual","name":"Accurate Attack Indicator","id":"accurate_attack_indicator"},{"options":{},"category":"Visual","name":"Health Indicator","id":"health_indicator"},{"options":{"highlight":"Highlight in range","nearest":"Nearest player only","random_colors":"Color per player","self":"Show own circle"},"category":"Visual","name":"Hit Range","id":"hit_range"},{"options":{"flat":"Lay flat","no_bobbing":"Disable bobbing","settle":"Settle on landing","tumble":"Tumble while falling"},"category":"Visual","name":"Item Physics","id":"item_physics"},{"options":{"players":"Players only"},"category":"Utility","name":"Hit Sounds","id":"hit_sounds"},{"options":{},"category":"Utility","name":"Confirm Disconnect","id":"confirm_disconnect"},{"options":{"background":"Panel background","degrees":"Tick degree labels","fade":"Fade edges","heading":"Current heading","intercardinals":"Show NE / SE / SW / NW","ticks":"Degree ticks"},"category":"HUD","name":"Direction HUD","id":"direction"},{"options":{"voice":"Voice actions"},"category":"Utility","name":"Social Wheel","id":"social_wheel"},{"options":{"glint":"Enchantment glint"},"category":"Visual","name":"Sword Skins","id":"sword_skins"},{"options":{"artwork":"Album cover","auto_hide":"Hide when Spotify is inactive","background":"Panel background","controls":"Playback controls","flying_lyrics":"Flying lyrics","island":"Lyrics island","lyrics_glow":"Glow","lyrics_gradient":"Gradient","lyrics_through_walls":"Show lyrics through walls","player_panel":"Playback panel","progress":"Playback progress","shadow":"Text shadow"},"category":"HUD","name":"Spotify","id":"spotify"},{"options":{"always_hide":"Always hide","use_keybind":"Use keybind"},"category":"Visual","name":"Hide Armor","id":"hide_armor"},{"options":{"blocking":"Tint while blocking","disabled":"Tint disabled shield","fade":"Fade during cooldown","own_only":"Only my shield","raising":"Tint while raising","ready":"Tint ready shield"},"category":"Visual","name":"Shield Status","id":"shield_status"},{"options":{"icons":"Server list icons","list":"Server list banners","tab":"Tab list banners"},"category":"Visual","name":"Server Media","id":"server_media"},{"options":{"block_entity_occlusion":"Skip hidden block entity models","chunk_index":"Fast chunk lookup","cull_armor_stand_names":"Hide covered armor stand names","cull_block_displays":"Hide covered block displays","cull_item_displays":"Hide covered item displays","cull_text_displays":"Hide covered text displays","dynamic_occlusion":"Distance-based visibility checks","entity_occlusion":"Skip hidden entity models","frames":"Cache decoded icon frames (32 MiB)","keyframes":"Fast animation keyframe lookup","limit_menu":"Custom main menu FPS","limit_unfocused":"Limit unfocused FPS","meshes":"Cache shield geometry (64 MiB)","particle_budget":"Limit particle bursts","particle_physics":"Particle collision physics","sign_text_cache":"Cache sign text measurements"},"category":"Utility","name":"Performance","id":"performance"},{"options":{"cancel_move":"Stop when moving","others":"Show other players\u0027 emotes","self":"Show my emotes","sounds":"Emote sounds","third_person":"Show myself while emoting"},"category":"Visual","name":"Emotes","id":"emotes"},{"options":{"animate":"Animate cape","collision":"World Collision (Beta)","elytra":"Matching Elytra","others":"Other clients\u0027 capes","physics":"Cape Physics"},"category":"Visual","name":"Animated Capes","id":"capes"},{"options":{},"category":"Movement","name":"Snaplook","id":"snaplook"},{"options":{},"category":"Visual","name":"Viewmodel / Small Items","id":"viewmodel"},{"options":{"fill":"Translucent fill"},"category":"Visual","name":"Block Outline","id":"block_outline"},{"options":{"transitions":"Smooth FOV transitions"},"category":"Visual","name":"Camera Effects","id":"camera_effects"},{"options":{},"category":"Visual","name":"Hit Color","id":"hit_color"},{"options":{"active":"Fullbright","use_keybind":"Use keybind"},"category":"Visual","name":"Fullbright","id":"fullbright"},{"options":{"background":"Panel background","brackets":"Show brackets","idle":"Show while idle","shadow":"Text shadow"},"category":"Movement","name":"Toggle Sprint","id":"toggle_sprint"},{"options":{},"category":"Movement","name":"Fly Speed","id":"fly_speed"},{"options":{"cinematic":"Cinematic camera","sensitivity":"Reduce sensitivity","smooth":"Smooth transition"},"category":"Movement","name":"Zoom","id":"zoom"},{"options":{"crosshair":"Crosshair in third person","self":"Own name in third person"},"category":"Visual","name":"NameTag","id":"nametag"},{"options":{"others":"Show other players\u0027 icons","self":"Show my own icon","share":"Show my icon to other clients","tab":"Icons in Tab"},"category":"Visual","name":"Icons","id":"icons"},{"options":{},"category":"Visual","name":"Motion Blur","id":"motionblur"},{"options":{"fluids":"Clear fluid fog"},"category":"Visual","name":"No Fog","id":"nofog"},{"options":{"animation":"Camera transition","invert":"Invert vertical movement","toggle":"Toggle instead of hold","transition_in":"In transition","transition_out":"Out transition"},"category":"Movement","name":"Freelook","id":"freelook"},{"options":{"background":"Panel background","right":"Show right CPS","shadow":"Text shadow"},"category":"HUD","name":"CPS","id":"cps"},{"options":{"background":"Panel background","shadow":"Text shadow"},"category":"HUD","name":"Combo","id":"combo"},{"options":{"background":"Panel background","shadow":"Text shadow"},"category":"HUD","name":"FPS","id":"fps"},{"options":{"background":"Panel background","live":"Measure live ping","shadow":"Text shadow"},"category":"HUD","name":"Ping","id":"ping"},{"options":{"24hour":"24-hour clock","background":"Panel background","seconds":"Show seconds","shadow":"Text shadow"},"category":"HUD","name":"Clock","id":"clock"},{"options":{"background":"Panel background","shadow":"Text shadow","vertical":"Include vertical movement"},"category":"HUD","name":"Speedometer","id":"speedometer"},{"options":{"background":"Panel background","shadow":"Text shadow"},"category":"HUD","name":"Reach Display","id":"reach"},{"options":{},"category":"Utility","name":"Borderless Fullscreen","id":"borderless"},{"options":{"outline":"Dark outline","target":"Highlight targeted entities"},"category":"Visual","name":"Custom Crosshair","id":"crosshair"},{"options":{"block":"Sword blocking pose","bow":"Classic bow pose","eat":"Classic eating pose","sneak":"Classic sneak camera","swing":"Classic swing"},"category":"Visual","name":"Old Animations","id":"old_animations"},{"options":{"background":"Panel background","numbers":"Show score numbers"},"category":"HUD","name":"Scoreboard","id":"scoreboard"},{"options":{"names":"Show boss names"},"category":"HUD","name":"Bossbar","id":"bossbar"},{"options":{},"category":"Visual","name":"Weather Changer","id":"weather"},{"options":{},"category":"Visual","name":"Time Changer","id":"time"},{"options":{"eyes":"Eye-height outline","highlight":"Highlight reachable target","mobs":"Mobs","other":"Other entities","players":"Players","self":"Own hitbox in third person"},"category":"Visual","name":"Hitbox","id":"hitbox"},{"options":{},"category":"HUD","name":"Potion Effects","id":"potion_effects"},{"options":{"background":"Panel background","cps":"Show mouse CPS","jump":"Show jump key","mouse":"Show mouse buttons"},"category":"HUD","name":"Keystrokes","id":"keystrokes"},{"options":{"actions":"Screenshot chat actions","clean":"Hide HUD in screenshots","preview":"Show screenshot preview","scroll_animation":"Smooth scrolling"},"category":"Utility","name":"Screenshot Tools","id":"screenshot"},{"options":{},"category":"Visual","name":"Particles","id":"particles"},{"options":{},"category":"Visual","name":"Glint Colorizer","id":"glint"},{"options":{},"category":"Visual","name":"TNT Timer","id":"tnt"},{"options":{},"category":"Visual","name":"Fire Overlay","id":"low_fire"},{"options":{},"category":"Utility","name":"No Advancement","id":"noadvancement"},{"options":{"background":"Panel background","hide":"Hide address for streaming","shadow":"Text shadow"},"category":"HUD","name":"Server","id":"server"},{"options":{"food":"Preview held food"},"category":"HUD","name":"Saturation","id":"saturation"},{"options":{"background":"Panel background","dimension":"Show dimension","shadow":"Text shadow"},"category":"HUD","name":"Coordinates","id":"coordinates"},{"options":{"image":"Show Pixonix logo","menu":"Show in main menu","server":"Show server address","time":"Show elapsed time"},"category":"Utility","name":"Discord RPC","id":"discord_rpc"},{"options":{"afterglow":"Pixonix Afterglow","astral_voyage":"Pixonix Astral Voyage","auto_update":"Update music automatically","christmas_theme":"Christmas Theme","cleopatra":"Pixonix Cleopatra","far_horizon":"Pixonix Far Horizon","halloween":"Pitschonix Halloween Theme","normal":"Pitschonix Theme","offline":"Keep music downloaded","sands_of_dawn":"Pixonix Sands of Dawn"},"category":"Utility","name":"Menu Music","id":"menu_music"},{"options":{"birds":"Birds and owls","cavern":"Cavern","classic":"Pitschonix Halloween","dyinglight":"Dying Light","hall":"Grand Hall","millennium":"Millennium","parallax":"Follow pointer","sands_of_dawn":"Sands of Dawn"},"category":"Visual","name":"Background","id":"background"},{"options":{"fade":"Fade in","heads":"Chat Heads","input":"Animate input","message_menu":"Message context menu","peek":"Peek Chat (hold)","smooth":"Smooth Chat","snap":"Align and snap windows","twitch":"Twitch chat","twitch_badges":"Twitch badges","twitch_emotes":"Twitch emote images","twitch_timestamps":"Twitch timestamps"},"category":"Utility","name":"Chat","id":"chat"},{"options":{"backgrounds":"Menu backgrounds","buttons":"Buttons","containers":"Inventory controls","custom_font":"Pixonix UI","fields":"Text fields","menus":"Minecraft menus","rounded_corners":"Rounded corners (Beta)","server_list":"Classic server lists","sliders":"Sliders","tooltips":"Custom tooltips"},"category":"Visual","name":"Fancy GUI","id":"fancy_gui"},{"options":{},"category":"Visual","name":"Stretched Res","id":"stretched_res"},{"options":{},"category":"Visual","name":"World Colors","id":"world_color"},{"options":{"glow":"Glow","impacts":"Surface impacts","theme":"Theme colors"},"category":"Visual","name":"Celestial Weather","id":"celestial_weather"},{"options":{"color_properties":"Color Properties","colormap":"Custom colors","lightmap":"Custom lightmaps","sky":"Custom skies","stars":"Stars","style_clouds":"Vanilla clouds","style_moon":"Vanilla moon","style_sun":"Vanilla sun","style_theme":"Use theme color","sun_moon":"Sun \u0026 Moon","sunrise":"Sunrise \u0026 Sunset","visible_sky":"Sky"},"category":"Visual","name":"Custom Sky","id":"custom_sky"},{"options":{"background":"Panel background"},"category":"HUD","name":"Lyrics island","id":"spotify_island"}]
+[
+  {
+    "options": {},
+    "category": "Visual",
+    "name": "Health Indicator",
+    "id": "health_indicator",
+    "description": "Shows health above nearby living entities."
+  },
+  {
+    "options": {
+      "highlight": "Highlight in range",
+      "nearest": "Nearest player only",
+      "random_colors": "Color per player",
+      "self": "Show own circle"
+    },
+    "category": "Visual",
+    "name": "Hit Range",
+    "id": "hit_range",
+    "description": "Draws a ring showing how far a player can reach with an attack."
+  },
+  {
+    "options": {
+      "blocking": "Tint while blocking",
+      "disabled": "Tint disabled shield",
+      "fade": "Fade during cooldown",
+      "own_only": "Only my shield",
+      "raising": "Tint while raising",
+      "ready": "Tint ready shield"
+    },
+    "category": "Visual",
+    "name": "Shield Status",
+    "id": "shield_status",
+    "description": "Highlights shields as they raise, block or recover."
+  },
+  {
+    "options": {
+      "active": "Fullbright",
+      "use_keybind": "Use keybind"
+    },
+    "category": "Visual",
+    "name": "Fullbright",
+    "id": "fullbright",
+    "description": "Brightens dark areas using gamma or night vision."
+  },
+  {
+    "options": {},
+    "category": "Movement",
+    "name": "Fly Speed",
+    "id": "fly_speed",
+    "description": "Adjusts flight speed when the player can already fly."
+  },
+  {
+    "options": {
+      "animation": "Camera transition",
+      "invert": "Invert vertical movement",
+      "toggle": "Toggle instead of hold",
+      "transition_in": "In transition",
+      "transition_out": "Out transition"
+    },
+    "category": "Movement",
+    "name": "Freelook",
+    "id": "freelook",
+    "description": "Lets players look around without turning their character."
+  },
+  {
+    "options": {},
+    "category": "Visual",
+    "name": "Stretched Res",
+    "id": "stretched_res",
+    "description": "Stretches the world horizontally while keeping the HUD at its normal size."
+  }
+]

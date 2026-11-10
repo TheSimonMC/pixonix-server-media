@@ -14,28 +14,21 @@ function selectPanel(id){
 for(const b of $("sections").children)b.onclick=()=>selectPanel(b.dataset.panel);
 function asset(kind){return art.get(kind+"@2x.png")??art.get(kind+".png");}
 function preview(){
-  const name=$("name").value.trim()||"Your network", address=$("address").value.trim()||"play.example.net";
-  const view=$("view").value, scene=$("scene");
-  $("wtitle").textContent=view==="Server list"?"Multiplayer":view;
-  scene.replaceChildren();
-  if(view==="Server list"){
-    const row=make("div"), text=make("div"),icon=asset("icon");
-    row.className="serverrow";
-    if(asset("background"))row.style.backgroundImage="url("+asset("background").url+")";
-    if(icon){const img=make("img");img.alt="";img.src=icon.url;row.append(img);}
-    else {const empty=make("div","◇");empty.className="placeholder";row.append(empty);}
-    text.append(make("strong",name),make("span",address));row.append(text);scene.append(row);
-  }else if(view==="Quick Joins"){
-    const names=[...$("joins").children].map(r=>r.querySelector("input").value.trim()).filter(Boolean);
-    for(const title of names.length?names:["No modes configured"]){const line=make("div",title);line.className="quickrow";scene.append(line);}
-  }else{
-    const tab=view==="TAB list", box=make("div"), item=asset(tab?"banner":"logo");
-    box.className=tab?"tabpreview":"logopreview";
-    if(item){const img=make("img");img.alt=tab?"TAB banner":"Server logo";img.src=item.url;if(tab)img.style.width=$("width").value+"px";box.append(img);}
-    else if(!tab)box.append(make("span","No logo selected"));
-    if(tab)box.append(make("div","Player  ▪ ▪ ▪"));scene.append(box);
+  const example = $("source").value === "example";
+  const images = {};
+  for (const kind of Object.keys(kinds)) {
+    const file = kind === "banner" ? "banner.png" : kind + "@2x.png";
+    images[kind] = example ? clientPreview.image("minecraft_servers/pitschonix/" + file) : asset(kind)?.img;
   }
-  $("folder").textContent="minecraft_servers/"+($("slug").value.trim()||"…");
+  clientPreview.render({
+    name: example ? "Pitschonix.eu" : $("name").value.trim() || "Your network",
+    address: example ? "pitschonix.eu" : $("address").value.trim() || "play.example.net",
+    id: example ? "pitschonix" : $("slug").value.trim(),
+    bannerWidth: example ? 150 : Number($("width").value),
+    joins: example ? [] : [...$("joins").children].map(row => row.querySelector("input").value.trim() || "New mode"),
+    view: $("view").value, art: images
+  });
+  $("folder").textContent="minecraft_servers/"+($("slug").value.trim()||"â€¦");
   $("fileCount").textContent=(art.size+1)+" file"+(art.size?"s":"");
   $("widthValue").textContent=$("width").value+" px";
 }
@@ -43,8 +36,8 @@ function validFile(file,img){
   if(!img.naturalWidth || Math.max(img.naturalWidth,img.naturalHeight)>4096 || img.naturalWidth*img.naturalHeight>8388608)throw Error("PNG dimensions exceed the client limits.");
 }
 for(const filename of filenames){
-  const row=make("div"),label=make("label",kinds[filename.split(/[@.]/)[0]]+(filename.includes("@")?" (2×)":"")), input=make("input"),clear=make("button","Clear");
-  row.className="file";input.type="file";input.accept="image/png";label.append(input);row.append(label,clear);$("assets").append(row);clear.hidden=true;
+  const row=make("div"),label=make("label",kinds[filename.split(/[@.]/)[0]]+(filename.includes("@")?" (2Ã—)":"")), input=make("input"),clear=make("button","Clear");
+  row.className="file";input.type="file";input.accept="image/png";label.append(input);row.append(label,clear);$(filename.includes("@") ? "hires" : "assets").append(row);clear.hidden=true;
   const reset=()=>{drafts.delete(filename);if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);art.delete(filename);input.value="";clear.hidden=true;preview();};
   clear.onclick=reset;
   input.onchange=async()=>{
@@ -63,7 +56,8 @@ for(const filename of filenames){
       url=URL.createObjectURL(file);const img=new Image();img.src=url;await img.decode();validFile(file,img);
       if(drafts.get(filename)!==token)return;
       if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);
-      art.set(filename,{file,url,data});url=null;clear.hidden=false;report("");
+      art.set(filename,{file,url,data,img});url=null;clear.hidden=false;report("");
+      $("source").value="draft";
       $("view").value=filename.startsWith("banner")?"TAB list":filename.startsWith("logo")?"Server logo":"Server list";
     }catch(e){if(drafts.get(filename)===token){reset();report(e.message);}}
     finally{if(url)URL.revokeObjectURL(url);if(drafts.get(filename)===token)drafts.delete(filename);preview();}
@@ -76,7 +70,7 @@ $("add").onclick=()=>{
     const label=make("label",title), input=make("input");input.placeholder=placeholder;input.maxLength=title==="Mode"?32:260;label.append(input);row.append(label);
   }
   const remove=make("button","Remove");remove.onclick=()=>{row.remove();$("add").disabled=false;preview();};row.append(remove);$("joins").append(row);
-  $("add").disabled=$("joins").children.length===12;$("view").value="Quick Joins";row.querySelector("input").focus();preview();
+  $("add").disabled=$("joins").children.length===12;$("source").value="draft";$("view").value="Quick Joins";row.querySelector("input").focus();preview();
 };
 function check(key,label){
   const el=make("label"), box=make("input");el.className="check";box.type="checkbox";box.checked=denied.has(key);
@@ -86,19 +80,45 @@ function policies(){
   const query=$("filter").value.trim().toLowerCase(), list=$("policy");list.replaceChildren();
   for(const m of modules??[]){
     const options=Object.entries(m.options);
-    const match=m.name.toLowerCase().includes(query)||m.id.includes(query);
+    const match=[m.name,m.id,m.category,m.description].some(text=>text.toLowerCase().includes(query));
     const found=options.filter(([key,label])=>match || (key+" "+label).toLowerCase().includes(query));
     if(!match&&!found.length)continue;
-    const d=make("details"),summary=make("summary",m.name),body=make("div");
-    d.open=Boolean(query);body.className="ruleOptions";body.append(check(m.id,"Disable "+m.name));
-    for(const [key,title] of found)body.append(check(m.id+"."+key,title));
-    d.append(summary,body);list.append(d);
+    let section = list.querySelector('[data-category="' + m.category + '"]');
+    if (!section) {
+      section = make("section");
+      section.dataset.category = m.category;
+      section.append(make("h3",m.category));
+      list.append(section);
+    }
+    const card = make("article"), head = make("label"), info = make("span"), icon = make("img"), toggle = make("input");
+    card.className = "rule"; head.className = "rulehead";
+    icon.src = "assets/" + m.id + ".png"; icon.alt = "";
+    toggle.type = "checkbox"; toggle.checked = denied.has(m.id);
+    toggle.setAttribute("aria-label","Disable " + m.name);
+    toggle.onchange = () => toggle.checked ? denied.add(m.id) : denied.delete(m.id);
+    info.append(make("strong", m.name),make("small",m.description));
+    head.append(icon,info,toggle); card.append(head);
+    if (found.length) {
+      const details = make("details"), body = make("div");
+      details.open = Boolean(query && !match);
+      body.className = "ruleOptions";
+      for (const [key,title] of found) body.append(check(m.id+"."+key,title));
+      details.append(make("summary","Individual settings ("+found.length+")"),body);
+      card.append(details);
+    }
+    section.append(card);
   }
   if(modules&&!list.childElementCount)list.append(make("p","No matching mods."));
 }
 fetch("modules.json").then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{modules=data.sort((a,b)=>a.name.localeCompare(b.name));policies();}).catch(()=>report("Could not load the mod list. Reload the editor to edit mod rules."));
 $("filter").oninput=policies;
-$("view").onchange=preview;
+$("source").onchange = $("view").onchange = () => { clientPreview.resetPage(); preview(); };
+let customSlug = false;
+$("slug").addEventListener("input", () => { customSlug = Boolean($("slug").value); });
+$("name").addEventListener("input", () => {
+  if (!customSlug) $("slug").value = $("name").value.toLowerCase().normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,64);
+});
 document.addEventListener("input",preview);
 function addr(raw){
   const label="[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?",s=raw.trim().toLowerCase();
@@ -108,7 +128,7 @@ function addr(raw){
 }
 function title(text,max){
   const s=text.trim();
-  if(!s||[...s].length>max||/[\p{C}\p{Zl}\p{Zp}]/u.test(s))throw Error("Enter a printable name of 1–"+max+" characters.");
+  if(!s||[...s].length>max||/[\p{C}\p{Zl}\p{Zp}]/u.test(s))throw Error("Enter a printable name of 1â€“"+max+" characters.");
   return s;
 }
 function manifest(){

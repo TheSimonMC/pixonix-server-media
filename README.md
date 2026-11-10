@@ -27,10 +27,6 @@ For the icon, background and logo you can also supply an `@2x.png` version, such
 
 ## Quick Joins and mod rules
 
-A **Quick Join** connects through Minecraft’s multiplayer connection screen. For example, a mapping for `example.net` can offer **Duels** at `duels.example.net`. Configure your server or proxy to route that hostname to Duels. Each mapping supports up to 12 destinations on its listed hosts or their subdomains.
+A **Quick Join** connects through Minecraftâ€™s multiplayer connection screen. For example, a mapping for `example.net` can offer **Duels** at `duels.example.net`. Configure your server or proxy to route that hostname to Duels. Each mapping supports up to 12 destinations on its listed hosts or their subdomains.
 
-Under **Mod rules**, select an entire mod or expand it to disable a single on/off feature. For example, you can disable Freelook or just the live ping measurement. The rules apply to the connected server. A restriction sent by the server’s plugin also applies. Disconnecting restores the player’s own settings.
-
-## What is `tools/`?
-
-It contains the Python checker that GitHub runs on submissions. The editor writes the manifest and ZIP for you. If you prefer to check a fork locally, install Pillow and run `python tools/build_index.py` from the repository root. Add `--output index.local.json` to inspect the generated catalog. The root `index.json` serves older client builds.
+**Mod rules** can restrict Shield Status, Hit Range, Stretched Res, Fly Speed, Fullbright, Freelook and Health Indicator. Select a mod to disable it, or expand its settings to restrict a single switch. All other mods stay under the player’s control. When a player disconnects, their own settings apply again.

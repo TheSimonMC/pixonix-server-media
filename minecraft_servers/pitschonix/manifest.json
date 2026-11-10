@@ -2,14 +2,5 @@
   "server_name": "pitschonix",
   "nice_name": "Pitschonix.eu",
   "direct_ip": "pitschonix.eu",
-  "tab_width": 150,
-  "server_wildcards": [],
-  "social": {
-    "web": "https://pitschonix.eu"
-  },
-  "brand": {
-    "primary": "#AA00AA",
-    "background": "#100519",
-    "text": "#FFFF55"
-  }
+  "tab_width": 150
 }

@@ -7,7 +7,7 @@ from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 ASSETS = {
     "icon": ("icon@2x.png", "icon.png"), "background": ("background@2x.png", "background.png"),
     "logo": ("logo@2x.png", "logo.png"), "banner": ("banner.png",),
@@ -56,19 +56,8 @@ def server(folder, root, catalog):
     manifest = files["manifest.json"]
     require(manifest.stat().st_size <= 65536, "Manifest exceeds 64 KiB")
     data = json.loads(manifest.read_text("utf-8-sig"), object_pairs_hook=unique_fields)
-    require(set(data) <= {"server_name","nice_name","direct_ip","aliases","quick_joins","policy","tab_width",
-                          "social","brand","server_wildcards"}, "Unknown manifest field")
-    require(data["server_name"] == folder.name and data.get("server_wildcards", []) == [], "Invalid ID or wildcard")
-    if "brand" in data:
-        require(isinstance(data["brand"],dict) and set(data["brand"]) <= {"primary","background","text"}
-                and all(re.fullmatch(r"#[a-fA-F0-9]{6}",v) for v in data["brand"].values()), "Invalid brand color")
-    if "social" in data:
-        from urllib.parse import urlsplit
-        social = data["social"]
-        require(isinstance(social,dict) and set(social) <= {"web"}, "Invalid social link")
-        for url in social.values():
-            parsed = urlsplit(url)
-            require(parsed.scheme=="https" and parsed.hostname and not parsed.username and not parsed.password, "Invalid website")
+    require(set(data) <= {"server_name","nice_name","direct_ip","aliases","quick_joins","policy","tab_width"}, "Unknown manifest field")
+    require(data["server_name"] == folder.name, "Invalid server ID")
     aliases = data.get("aliases", [])
     require(isinstance(aliases,list) and len(aliases)<64, "Too many aliases")
     addresses = [address(a) for a in [data["direct_ip"], *aliases]]
