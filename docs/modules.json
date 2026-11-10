@@ -4,21 +4,21 @@
     "category": "Visual",
     "name": "Health Indicator",
     "id": "health_indicator",
-    "description": "Shows health above nearby living entities."
+    "description": "Shows how much health nearby players and mobs have left."
   },
   {
     "options": {},
     "category": "Visual",
     "name": "Hit Range",
     "id": "hit_range",
-    "description": "Draws a ring showing how far a player can reach with an attack."
+    "description": "Draws a ring around a player to show their attack range."
   },
   {
     "options": {},
     "category": "Visual",
     "name": "Shield Status",
     "id": "shield_status",
-    "description": "Highlights shields as they raise, block or recover."
+    "description": "Changes a shield's color as the player raises it, blocks with it, or waits for it to recover."
   },
   {
     "options": {
@@ -27,14 +27,14 @@
     "category": "Visual",
     "name": "Fullbright",
     "id": "fullbright",
-    "description": "Brightens dark areas using gamma or night vision."
+    "description": "Brightens dark areas using Gamma or Night Vision."
   },
   {
     "options": {},
     "category": "Movement",
     "name": "Fly Speed",
     "id": "fly_speed",
-    "description": "Adjusts flight speed when the player can already fly."
+    "description": "Lets players adjust their flight speed when flying is already allowed."
   },
   {
     "options": {},

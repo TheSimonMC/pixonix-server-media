@@ -1,4 +1,4 @@
-"""Validate reviewed Minecraft server media and produce its client index."""
+"""Validate server mappings and build the Pixonix client catalog."""
 import argparse
 import hashlib
 import json
@@ -26,15 +26,15 @@ def address(value):
 
 def label(value, maximum):
     require(isinstance(value, str) and value.strip() == value and 0 < len(value) <= maximum
-            and value.isprintable(), "Invalid display name")
+            and value.isprintable(), f"Enter a display name between 1 and {maximum} printable characters, with no leading or trailing spaces.")
     return value
 
 def image(path, root):
     size = path.stat().st_size
-    require(24 <= size <= 16*1024**2, f"{path.name}: file size")
+    require(24 <= size <= 16*1024**2, f"{path.name} must be between 24 bytes and 16 MiB.")
     with Image.open(path, formats=["PNG"]) as png:
         w, h = png.size
-        require(max(w,h) <= 4096 and w*h <= 8388608 and not png.is_animated, f"{path.name}: dimensions or animation")
+        require(max(w,h) <= 4096 and w*h <= 8388608 and not png.is_animated, f"{path.name} must be a still PNG with no side longer than 4,096 pixels and no more than 8,388,608 pixels in total.")
         png.verify()
     with Image.open(path) as png:
         png.load()
@@ -57,25 +57,25 @@ def server(folder, root, catalog):
     require(manifest.stat().st_size <= 65536, "Manifest exceeds 64 KiB")
     data = json.loads(manifest.read_text("utf-8-sig"), object_pairs_hook=unique_fields)
     require(set(data) <= {"server_name","nice_name","direct_ip","aliases","quick_joins","policy","tab_width"}, "Unknown manifest field")
-    require(data["server_name"] == folder.name, "Invalid server ID")
+    require(data["server_name"] == folder.name, "server_name must match the folder name.")
     aliases = data.get("aliases", [])
-    require(isinstance(aliases,list) and len(aliases)<64, "Too many aliases")
+    require(isinstance(aliases,list) and len(aliases)<64, "Provide aliases as a list of up to 63 alternate addresses.")
     addresses = [address(a) for a in [data["direct_ip"], *aliases]]
-    require(len(set(addresses)) == len(addresses), "Duplicate alias")
+    require(len(set(addresses)) == len(addresses), "List each server address only once.")
     row = dict(id=folder.name, name=label(data["nice_name"],64), addresses=addresses)
     width = data.get("tab_width",250)
-    require(type(width) is int and 80 <= width <= 250, "TAB width must be 80–250")
+    require(type(width) is int and 80 <= width <= 250, "Set tab_width to a whole number between 80 and 250 pixels.")
     row["tabWidth"] = width
     modes = data.get("quick_joins",[])
-    require(isinstance(modes,list) and len(modes)<=12, "At most 12 Quick Joins")
+    require(isinstance(modes,list) and len(modes)<=12, "Provide quick_joins as a list of up to 12 destinations.")
     if modes:
         joins = []
         for mode in modes:
-            require(set(mode)=={"name","address"}, "Quick Join needs a name and address")
+            require(set(mode)=={"name","address"}, "Each Quick Join must have a name and an address.")
             target = address(mode["address"])
             host = target.split(":")[0]
             require(any(host == a.split(":")[0] or host.endswith("."+a.split(":")[0]) for a in addresses),
-                    "Quick Join must belong to the mapped network")
+                    "Each Quick Join must use a listed hostname or one of its subdomains.")
             joins.append(dict(name=label(mode["name"],32), address=target))
         for key in ("name","address"):
             require(len({m[key].casefold() for m in joins}) == len(joins), f"Duplicate Quick Join {key}")
@@ -87,7 +87,7 @@ def server(folder, root, catalog):
         for section, known in catalog.items():
             entries = p["modules"] if section=="modules" else p.get("options",{})
             require(isinstance(entries,dict) and all(k in known and type(v) is bool for k,v in entries.items()),
-                    f"Unknown {section} or invalid permission")
+                    f"The policy field {section} must contain supported rules with true or false values.")
         row["policy"] = p
     for kind, names in ASSETS.items():
         for name in names:
@@ -101,7 +101,7 @@ def build(root):
     catalog = {"modules": {m["id"] for m in modules},
                "options": {m["id"]+"."+key for m in modules for key in m["options"]}}
     base = root/"minecraft_servers"
-    require(base.is_dir() and not base.is_symlink(), "Missing or invalid minecraft_servers")
+    require(base.is_dir() and not base.is_symlink(), "The minecraft_servers directory is missing or invalid.")
     rows, addresses = [], set()
     for folder in sorted(base.iterdir()):
         try:
@@ -113,7 +113,7 @@ def build(root):
             raise ValueError(f"{folder.name}: {exc}") from exc
     require(len(rows)<=5000, "Too many servers")
     payload = json.dumps(dict(schema=1,servers=rows),ensure_ascii=False,separators=(",",":"))+"\n"
-    require(len(payload.encode())<=4*1024**2, "Client index size limit")
+    require(len(payload.encode())<=4*1024**2, "The client catalog exceeds the 4 MiB limit.")
     return payload
 
 if __name__=="__main__":

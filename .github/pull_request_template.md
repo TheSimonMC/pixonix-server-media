@@ -1,5 +1,8 @@
-**Network and address**
+**Server name and address**
 
-**What should players see or be able to join?**
+**What does this mapping add or change?**
 
-**Where can the reviewer verify that you represent this server and that the listed addresses and artwork belong to it?**
+**Where can we verify that you represent this server?**
+Please include a public link, such as the server website or an announcement from the server team.
+
+**Do you have permission to publish the submitted artwork?**

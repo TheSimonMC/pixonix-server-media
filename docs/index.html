@@ -11,7 +11,7 @@
 <body>
 <header><div class="wrap mast"><a class="brand" href="./"><img src="assets/icon.png" alt="">Pixonix <span>Server Media</span></a><a href="https://github.com/TheSimonMC/pixonix-server-media#readme">Submission guide ↗</a></div></header>
 <main class="wrap">
-  <div class="heading"><div><h1>Mapping editor</h1><p>Set up your Minecraft server in Pixonix. Files stay in this tab until you export.</p></div>
+  <div class="heading"><div><h1>Mapping editor</h1><p>Preview your server artwork, set up Quick Joins, and choose mod rules. Your files stay in your browser.</p></div>
     <button class="primary" id="export"><img src="assets/download.svg" alt="">Download ZIP</button></div>
   <p id="status" role="status"></p>
   <div class="workspace">
@@ -25,30 +25,30 @@
       <section class="panel" id="identity"><h2>Server details</h2>
         <label>Display name<input id="name" maxlength="64" placeholder="Your network" autocomplete="off"></label>
         <label>Java server address<input id="address" placeholder="play.example.net" spellcheck="false">
-          <small>Include the port for servers outside port 25565.</small></label>
+          <small>Include the port if your server uses a port other than 25565.</small></label>
         <details class="more"><summary>Folder ID and alternate addresses</summary>
           <label>Folder ID<input id="slug" maxlength="64" placeholder="your_network" spellcheck="false"></label>
-          <label>Other join addresses<textarea id="aliases" rows="3" placeholder="One address per line" spellcheck="false"></textarea></label>
+          <label>Alternate server addresses<textarea id="aliases" rows="3" placeholder="One address per line" spellcheck="false"></textarea></label>
         </details>
       </section>
-      <section class="panel" hidden id="art"><h2>Artwork</h2><p>Still PNGs up to 4096 px per side, 8 megapixels and 16 MiB each.</p>
-        <div id="assets"></div><details class="more"><summary>High-resolution alternatives (2×)</summary><div id="hires"></div></details>
-        <label class="range">TAB banner width <output id="widthValue">250 px</output><input id="width" type="range" min="80" max="250" value="250"></label>
+      <section class="panel" hidden id="art"><h2>Artwork</h2><p>Choose still PNGs up to 16 MiB each. Each image can be up to 4,096 pixels wide or tall, with a total limit of 8,388,608 pixels.</p>
+        <div id="assets"></div><details class="more"><summary>High-resolution artwork (2×)</summary><div id="hires"></div></details>
+        <label class="range">Player list banner width <output id="widthValue">250 px</output><input id="width" type="range" min="80" max="250" value="250"></label>
       </section>
-      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Give each mode an address that routes players to it on your network.</p>
+      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Add the address players use to join each game mode directly.</p>
         <div id="joins"></div><button id="add">+ Add mode</button></section>
-      <section class="panel" hidden id="rules"><h2>Mod rules</h2><p>Check a mod to disable it on your server. Fullbright also has a Night Vision only mode. Players keep their settings when they disconnect.</p>
-        <label class="search"><input id="filter" type="search" aria-label="Find a mod or feature" placeholder="Search mods and features"></label><div id="policy"></div>
+      <section class="panel" hidden id="rules"><h2>Mod rules</h2><p>Select the mods you want to disable on your server. For Fullbright, you can also allow Night Vision only. Players keep their own settings when they leave.</p>
+        <label class="search"><input id="filter" type="search" aria-label="Search mods" placeholder="Search mods"></label><div id="policy"></div>
       </section>
     </section>
     <aside aria-labelledby="preview-title">
-      <div class="previewhead"><h2 id="preview-title">Client preview</h2><select id="view" aria-label="Preview surface"><option>Server list</option><option>TAB list</option><option>Quick Joins</option><option>Server logo</option></select></div>
+      <div class="previewhead"><h2 id="preview-title">Client preview</h2><select id="view" aria-label="Preview screen"><option>Server list</option><option value="TAB list">Player list (Tab)</option><option>Quick Joins</option><option>Server logo</option></select></div>
       <div id="stage"><canvas id="scene" width="368" height="212" aria-label="Client preview" role="img"></canvas></div>
-      <div class="previewfoot"><label>Preview data<select id="source"><option value="draft">Your mapping</option><option value="example">Pitschonix example</option></select></label>
+      <div class="previewfoot"><label>Show<select id="source"><option value="draft">Your mapping</option><option value="example">Pitschonix example</option></select></label>
         <div id="pages" hidden><button id="prev" aria-label="Previous preview page">‹</button><button id="next" aria-label="Next preview page">›</button></div></div>
       <p id="caption"></p>
     </aside>
   </div>
   <div class="exportinfo"><img src="assets/folder.svg" alt=""><code id="folder">minecraft_servers/…</code><span id="fileCount">1 file</span></div>
-  <footer>Extract your ZIP into a fork, then submit the server folder for review. <a href="https://github.com/TheSimonMC/pixonix-server-media/fork">Fork on GitHub ↗</a></footer>
+  <footer>Extract the ZIP into your fork, then open a pull request. <a href="https://github.com/TheSimonMC/pixonix-server-media/fork">Fork on GitHub ↗</a></footer>
 </main></body></html>

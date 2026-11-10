@@ -59,8 +59,11 @@ footer a {margin-left:6px}
 .file,.mode,.rule {margin-top:10px;border:1px solid var(--border);border-radius:5px;background:var(--well);padding:12px}
 .file,.mode {display:flex;align-items:center;gap:10px}
 .file label,.mode label {min-width:0;flex:1}
-.file input[type=file] {font-size:12px;padding:4px;border:0}
-input::file-selector-button {color:var(--text);background:#37303f;border:0;padding:5px 9px;border-radius:3px;margin-right:8px}
+.picker {position:relative;display:flex;align-items:center;gap:8px;margin-top:5px;font-size:13px;cursor:pointer}
+.picker input[type=file] {position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:pointer}
+.picker span:first-of-type {background:#37303f;border-radius:3px;padding:5px 9px;white-space:nowrap}
+.picker input:focus-visible + span {outline:2px solid var(--accent);outline-offset:2px}
+.filename {font-weight:400;color:var(--muted);overflow-wrap:anywhere;min-width:0}
 .mode {align-items:end;flex-wrap:wrap}
 .mode label {min-width:110px}
 #add {margin-top:12px}

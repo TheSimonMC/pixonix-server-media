@@ -2,7 +2,7 @@
 const $ = id => document.getElementById(id);
 const make = (tag,text) => Object.assign(document.createElement(tag),{textContent:text??""});
 const art = new Map(), drafts = new Map(), denied = new Set();
-const kinds = {"icon":"List icon","background":"List background","banner":"TAB banner","logo":"Server logo"};
+const kinds = {"icon":"Server list icon","background":"Server list background","banner":"Player list banner","logo":"Server logo"};
 const filenames = ["icon.png","background.png","banner.png","logo.png","icon@2x.png","background@2x.png","logo@2x.png"];
 const encoder = new TextEncoder();
 let modules;
@@ -28,35 +28,38 @@ function preview(){
     joins: example ? [] : [...$("joins").children].map(row => row.querySelector("input").value.trim() || "New mode"),
     view: $("view").value, art: images
   });
-  $("folder").textContent="minecraft_servers/"+($("slug").value.trim()||"â€¦");
+  $("folder").textContent="minecraft_servers/"+($("slug").value.trim()||"…");
   $("fileCount").textContent=(art.size+1)+" file"+(art.size?"s":"");
   $("widthValue").textContent=$("width").value+" px";
 }
 function validFile(file,img){
-  if(!img.naturalWidth || Math.max(img.naturalWidth,img.naturalHeight)>4096 || img.naturalWidth*img.naturalHeight>8388608)throw Error("PNG dimensions exceed the client limits.");
+  if(!img.naturalWidth || Math.max(img.naturalWidth,img.naturalHeight)>4096 || img.naturalWidth*img.naturalHeight>8388608)throw Error("Choose an image with no more than 8,388,608 pixels and no side longer than 4,096 pixels.");
 }
 for(const filename of filenames){
-  const row=make("div"),label=make("label",kinds[filename.split(/[@.]/)[0]]+(filename.includes("@")?" (2Ã—)":"")), input=make("input"),clear=make("button","Clear");
-  row.className="file";input.type="file";input.accept="image/png";label.append(input);row.append(label,clear);$(filename.includes("@") ? "hires" : "assets").append(row);clear.hidden=true;
-  const reset=()=>{drafts.delete(filename);if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);art.delete(filename);input.value="";clear.hidden=true;preview();};
+  const row=make("div"),label=make("label",kinds[filename.split(/[@.]/)[0]]+(filename.includes("@")?" (2×)":"")), input=make("input"),clear=make("button","Clear");
+  const picker=make("span"), action=make("span","Choose PNG"), name=make("span","No file selected");
+  picker.className="picker"; name.className="filename";
+  input.type="file";input.accept="image/png";input.setAttribute("aria-label","Choose PNG for "+label.textContent);
+  picker.append(input,action,name);label.append(picker);row.className="file";row.append(label,clear);$(filename.includes("@") ? "hires" : "assets").append(row);clear.hidden=true;
+  const reset=()=>{drafts.delete(filename);if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);art.delete(filename);input.value="";name.textContent="No file selected";clear.hidden=true;preview();};
   clear.onclick=reset;
   input.onchange=async()=>{
     const file=input.files[0];if(!file)return;
     const token=Symbol();drafts.set(filename,token);let url;
     try{
-      if(file.size>16777216)throw Error("PNG exceeds 16 MiB.");
-      const data=new Uint8Array(await file.arrayBuffer());
+      if(file.size>16777216)throw Error("Choose a PNG no larger than 16 MiB.");
+      const data=new Uint8Array(await file.arrayBuffer().catch(()=>{throw Error("This file could not be read. Choose it again.");}));
       if([137,80,78,71,13,10,26,10].some((v,i)=>data[i]!==v))throw Error("Select a PNG file.");
       const bytes=new DataView(data.buffer);
       for(let pos=8;pos+12<=data.length;){
-        const n=bytes.getUint32(pos);if(n>data.length-pos-12)throw Error("Incomplete PNG.");
-        if(bytes.getUint32(pos+4)===0x6163544c)throw Error("Animated PNGs are unsupported.");
+        const n=bytes.getUint32(pos);if(n>data.length-pos-12)throw Error("This PNG is incomplete. Choose another file.");
+        if(bytes.getUint32(pos+4)===0x6163544c)throw Error("Choose a still PNG. This file is animated.");
         pos+=12+n;
       }
-      url=URL.createObjectURL(file);const img=new Image();img.src=url;await img.decode();validFile(file,img);
+      url=URL.createObjectURL(file);const img=new Image();img.src=url;await img.decode().catch(()=>{throw Error("This PNG could not be opened. Choose another file.");});validFile(file,img);
       if(drafts.get(filename)!==token)return;
       if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);
-      art.set(filename,{file,url,data,img});url=null;clear.hidden=false;report("");
+      art.set(filename,{file,url,data,img});name.textContent=file.name;url=null;clear.hidden=false;report("");
       $("source").value="draft";
       $("view").value=filename.startsWith("banner")?"TAB list":filename.startsWith("logo")?"Server logo":"Server list";
     }catch(e){if(drafts.get(filename)===token){reset();report(e.message);}}
@@ -118,7 +121,7 @@ function policies(){
   }
   if(modules&&!list.childElementCount)list.append(make("p","No matching mods."));
 }
-fetch("modules.json").then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{modules=data.sort((a,b)=>a.name.localeCompare(b.name));policies();}).catch(()=>report("Could not load the mod list. Reload the editor to edit mod rules."));
+fetch("modules.json").then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{modules=data.sort((a,b)=>a.name.localeCompare(b.name));policies();}).catch(()=>report("The mod list could not be loaded. Download your draft before reloading the editor."));
 $("filter").oninput=policies;
 $("source").onchange = $("view").onchange = () => { clientPreview.resetPage(); preview(); };
 let customSlug = false;
@@ -134,28 +137,28 @@ document.addEventListener("input",event=>{
 function addr(raw){
   const label="[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?",s=raw.trim().toLowerCase();
   const m=s.match(new RegExp("^("+label+"(?:\\."+label+")+)(?::([1-9][0-9]{0,4}))?$"));
-  if(!m||m[1].length>253||Number(m[2]||25565)>65535)throw Error("Enter a valid Java server address: "+(s||"(empty)"));
+  if(!m||m[1].length>253||Number(m[2]||25565)>65535)throw Error("Enter a valid Java server address"+(s ? ". Check "+s+"." : ", such as play.example.net."));
   return m[1]+(m[2]&&m[2]!=="25565"?":"+m[2]:"");
 }
 function title(text,max){
   const s=text.trim();
-  if(!s||[...s].length>max||/[\p{C}\p{Zl}\p{Zp}]/u.test(s))throw Error("Enter a printable name of 1â€“"+max+" characters.");
+  if(!s||[...s].length>max||/[\p{C}\p{Zl}\p{Zp}]/u.test(s))throw Error("Enter a name between 1 and "+max+" characters long using printable characters.");
   return s;
 }
 function manifest(){
   const id=$("slug").value.trim();
-  if(!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(id))throw Error("Use lowercase letters, numbers, hyphens or underscores for the folder ID.");
+  if(!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(id))throw Error("Start the folder ID with a lowercase letter or number. Use up to 64 lowercase letters, numbers, hyphens, or underscores.");
   const aliases=$("aliases").value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean).map(addr);
   const direct=addr($("address").value),addresses=[direct,...aliases];
-  if(addresses.length>64||new Set(addresses).size!==addresses.length)throw Error("Use up to 64 distinct addresses.");
+  if(addresses.length>64||new Set(addresses).size!==addresses.length)throw Error("List each address only once, with no more than 64 addresses in total.");
   const result={server_name:id,nice_name:title($("name").value,64),direct_ip:direct,tab_width:Number($("width").value)};
   if(aliases.length)result.aliases=aliases;
   const modes=[...$("joins").children].map(r=>{
     const [n,a]=r.querySelectorAll("input"),dest=addr(a.value),host=dest.split(":")[0];
-    if(!addresses.some(s=>host===s.split(":")[0]||host.endsWith("."+s.split(":")[0])))throw Error("Quick Join targets must belong to a listed network address or its subdomains.");
+    if(!addresses.some(s=>host===s.split(":")[0]||host.endsWith("."+s.split(":")[0])))throw Error("Use a listed hostname or one of its subdomains for each Quick Join.");
     return {name:title(n.value,32),address:dest};
   });
-  for(const key of ["name","address"])if(new Set(modes.map(m=>m[key].toLowerCase())).size!==modes.length)throw Error("Give every Quick Join a distinct name and address.");
+  for(const key of ["name","address"])if(new Set(modes.map(m=>m[key].toLowerCase())).size!==modes.length)throw Error("Give each Quick Join its own name and server address.");
   if(modes.length)result.quick_joins=modes;
   if(denied.size){
     result.policy={version:1,modules:{},options:{}};
@@ -185,7 +188,7 @@ $("export").onclick=()=>{
     const files=[[base+"manifest.json",encoder.encode(JSON.stringify(data,null,2)+"\n")]];
     for(const [name,a] of art)files.push([base+name,a.data]);
     const url=URL.createObjectURL(zip(files)),a=make("a");a.href=url;a.download=data.server_name+".zip";a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),30000);report("ZIP ready. Extract it into your fork, then open a pull request.");
+    setTimeout(()=>URL.revokeObjectURL(url),30000);report("Your ZIP is ready. Extract it into your fork, then open a pull request.");
   }catch(e){report(e.message);$("status").scrollIntoView({block:"nearest"});}
 };
 preview();

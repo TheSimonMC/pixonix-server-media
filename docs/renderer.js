@@ -48,7 +48,7 @@ const clientPreview = (() => {
     box(x,y,w,20,active ? "#7600cc" : "#322b3f",active ? "#b47aec" : undefined);
     line(title,x+Math.floor(w/2),y+6,enabled ? "#faf6ff" : "#a39dab","center",w-6);
   }
-  // ServerMediaLayout.crop: row backgrounds start one quarter down; banners are centred.
+  // ServerMediaLayout.crop: row backgrounds start one quarter down; banners are centered.
   function cover(img,x,y,w,h,list = false) {
     if (!img) return;
     const scale = Math.max(w/img.naturalWidth,h/img.naturalHeight);
@@ -92,7 +92,7 @@ const clientPreview = (() => {
     button(center-154,height-52,96,"Join Server");button(center-54,height-52,96,"Quick Join",false,data.joins.length>0);
     button(center+46,height-52,108,"Add to my servers");button(center-154,height-28,152,"Refresh");button(center+2,height-28,152,"Back");
     box(center-178,height-28,20,20,"#322b3f");fit(image("assets/friends.png"),center-176,height-26,16,16);
-    return "Discover layout with a sample online count and message of the day.";
+    return "The Discover preview uses a sample player count and server message.";
   }
   function tab(data) {
     terrain();
@@ -109,10 +109,10 @@ const clientPreview = (() => {
       line(name,center-40,row);
       for (let j=0;j<4;j++) rect(center+33+j*2,row+6-j,1,j+1,"#73bf61");
     });
-    return "Six sample players. The banner is cropped to the width set under Artwork.";
+    return "The player list shows six sample players. You can adjust the banner width under Artwork.";
   }
   function quick(data) {
-    terrain();line("Quick Join Ã‚Â· "+data.name,center,18,"#ffffff","center",width-12);
+    terrain();line("Quick Join · "+data.name,center,18,"#ffffff","center",width-12);
     const count = Math.max(1,Math.floor((height-100)/24));
     const lastPage = Math.max(0,Math.ceil(data.joins.length/count)-1);
     page = Math.min(page,lastPage);
@@ -124,7 +124,7 @@ const clientPreview = (() => {
       document.getElementById("next").disabled = page === lastPage;
     }
     button(center-102,height-26,204,"Back");
-    return data.joins.length ? "Quick Join destinations appear in the order entered." : "Add a mode under Quick Joins to enable this menu in the client.";
+    return data.joins.length ? "Players see game modes in the order you add them." : "Add a mode under Quick Joins to enable this menu in the client.";
   }
   function render(data) {
     last = data;
@@ -137,10 +137,10 @@ const clientPreview = (() => {
       rect(0,0,width,height,"#19151e");
       if (data.art.logo) fit(data.art.logo,24,20,width-48,height-40);
       else line("No logo selected",center,height/2-4,"#c8bed1","center");
-      caption = "Original logo proportions on a dark surface.";
+      caption = data.art.logo ? "The preview keeps your logo's original proportions." : "Choose a server logo under Artwork to preview it here.";
     }
     document.getElementById("caption").textContent = caption;
-    canvas.setAttribute("aria-label",data.view+" preview for "+data.name+". "+caption);
+    canvas.setAttribute("aria-label",(data.view === "TAB list" ? "Player list" : data.view)+" preview for "+data.name+". "+caption);
   }
   document.getElementById("prev").onclick = () => {page=Math.max(0,page-1);render(last);};
   document.getElementById("next").onclick = () => {page++;render(last);};
