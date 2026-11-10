@@ -10,7 +10,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pending:
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Mark the submitted commit as awaiting review checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -X POST \
+            -f context='Validate mappings' -f state=pending
+
   inspect:
+    needs: pending
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,6 +38,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify submission terms
+        run: python -I checker/.github/scripts/check_consent.py
       - run: python -m pip install Pillow==12.2.0
       - name: Read mapping files from the submission
         env:

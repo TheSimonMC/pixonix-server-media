@@ -7,13 +7,13 @@ A mapping lets you customize how your Minecraft Java Edition server appears in P
 1. [Open the mapping editor](https://thesimonmc.github.io/pixonix-server-media/) and enter the name and address players use to join your server. Include the port if it differs from `25565`. If players use more than one address, add the others under **Folder ID and alternate addresses**.
 2. Check the folder ID. The editor suggests one based on your server name. If you're updating an existing mapping, use its current folder ID.
 3. Add any artwork, Quick Joins, or mod rules you want. Use the preview to see how your mapping will look in the client.
-4. Select **Download ZIP**. The editor processes your files in your browser. Closing or reloading the tab clears your draft.
+4. Read the [submission terms](SUBMISSION_TERMS.md), check the box, then select **Download ZIP**. The editor processes your files in your browser. Closing or reloading the tab clears your draft.
 
 ## Submit your mapping
 
 [Fork this repository](https://github.com/TheSimonMC/pixonix-server-media/fork), then extract the ZIP into the root of your fork. Your manifest should be at `minecraft_servers/<your_id>/manifest.json`. If you're updating a mapping, remove any artwork you no longer use.
 
-[Open a pull request](https://github.com/TheSimonMC/pixonix-server-media/compare) and include a public link that shows you represent the server. Only submit artwork you have permission to publish. GitHub checks the manifest, images, server addresses, Quick Joins, and mod rules. If a check fails, open its log for details and push the fix to the same branch.
+[Open a pull request](https://github.com/TheSimonMC/pixonix-server-media/compare) and include a public link that shows you represent the server. Check the submission terms box in the pull request description. Your files are public as soon as you push them to your public fork. GitHub checks the manifest, images, server addresses, Quick Joins, and mod rules. If a check fails, open its log for details and push the fix to the same branch.
 
 Once the checks pass, the repository owner reviews the submission. Pull requests that change only mappings merge automatically once the owner approves the latest changes and all required checks pass. GitHub Pages then publishes the artwork and the updated [server catalog](https://thesimonmc.github.io/pixonix-server-media/index.json). Compatible clients check for updates every 24 hours while running and use their cached catalog when offline.
 

@@ -77,3 +77,8 @@ footer a {margin-left:6px}
 @media(max-width:480px){.rulehead select{grid-column:2/-1;width:100%}}
 @media(max-width:850px){.workspace{grid-template-columns:1fr}aside{position:static}.wrap{max-width:700px}}
 @media(max-width:480px){.wrap{width:94%}.brand{gap:7px}.mast{font-size:13px}.brand span{display:none}.heading{align-items:flex-start;flex-direction:column;gap:12px}.primary{width:100%;justify-content:center}nav button{flex-direction:column;font-size:12px;gap:2px;padding:8px 2px}.previewhead{padding:10px}.previewhead h2{font-size:15px}.mode label{flex-basis:100%}}
+
+.submit-zip{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:24px 0;border-bottom:1px solid var(--line)}
+.submit-zip p{max-width:68ch}.submit-zip a{text-decoration:underline}.submit-zip .consent{display:flex;align-items:flex-start;gap:10px;margin-top:14px;cursor:pointer}
+.submit-zip .consent input{width:18px;height:18px;flex:none;accent-color:#934fea;margin:1px 0}.submit-zip button{flex:none}
+@media(max-width:650px){.submit-zip{align-items:flex-start;flex-direction:column}}

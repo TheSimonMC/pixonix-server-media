@@ -185,6 +185,11 @@ $("export").onclick=()=>{
   try{
     if(drafts.size)throw Error("Wait for the artwork preview to finish loading.");
     const data=manifest(),base="minecraft_servers/"+data.server_name+"/";
+    if (!$("consent").checked) {
+      $("consent").focus();
+      $("consent").reportValidity();
+      return;
+    }
     const files=[[base+"manifest.json",encoder.encode(JSON.stringify(data,null,2)+"\n")]];
     for(const [name,a] of art)files.push([base+name,a.data]);
     const url=URL.createObjectURL(zip(files)),a=make("a");a.href=url;a.download=data.server_name+".zip";a.click();

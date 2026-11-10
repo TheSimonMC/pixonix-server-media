@@ -12,7 +12,7 @@
 <header><div class="wrap mast"><a class="brand" href="./"><img src="assets/icon.png" alt="">Pixonix <span>Server Media</span></a><a href="https://github.com/TheSimonMC/pixonix-server-media#readme">Submission guide ↗</a></div></header>
 <main class="wrap">
   <div class="heading"><div><h1>Mapping editor</h1><p>Preview your server artwork, set up Quick Joins, and choose mod rules. Your files stay in your browser.</p></div>
-    <button class="primary" id="export"><img src="assets/download.svg" alt="">Download ZIP</button></div>
+    </div>
   <p id="status" role="status"></p>
   <div class="workspace">
     <section class="editor" aria-label="Mapping settings">
@@ -50,5 +50,11 @@
     </aside>
   </div>
   <div class="exportinfo"><img src="assets/folder.svg" alt=""><code id="folder">minecraft_servers/…</code><span id="fileCount">1 file</span></div>
+  <section class="submit-zip" aria-labelledby="export-title">
+    <div><h2 id="export-title">Export your mapping</h2><p>A ZIP stays on your device. Once you push it to a public fork, anyone can view, download or fork the files. You keep the rights you own.</p>
+    <a href="https://github.com/TheSimonMC/pixonix-server-media/blob/main/SUBMISSION_TERMS.md" target="_blank" rel="noopener">Read the submission terms ↗</a>
+    <label class="consent"><input id="consent" type="checkbox" required> I agree to the submission terms and have permission to publish these files.</label></div>
+    <button class="primary" id="export"><img src="assets/download.svg" alt="">Download ZIP</button>
+  </section>
   <footer>Extract the ZIP into your fork, then open a pull request. <a href="https://github.com/TheSimonMC/pixonix-server-media/fork">Fork on GitHub ↗</a></footer>
 </main></body></html>
