@@ -51,6 +51,13 @@ class MappingTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     self.index()
 
+    def test_supported_mod_rules(self):
+        allowed = ["shield_status", "hit_range", "stretched_res", "fly_speed",
+                   "fullbright", "freelook", "health_indicator"]
+        rules = dict.fromkeys(allowed, False)
+        self.mapping["policy"] = {"version": 1, "modules": rules}
+        self.assertEqual(self.index()["policy"]["modules"], rules)
+
     def test_legacy_asset_is_also_checked(self):
         Image.new("RGBA",(32,32)).save(self.folder/"icon@2x.png")
         (self.folder/"icon.png").write_bytes(b"not an image")
