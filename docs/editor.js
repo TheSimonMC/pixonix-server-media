@@ -31,8 +31,8 @@ function preview(){
     name: example ? "Pitschonix.eu" : $("name").value.trim() || "Your network",
     address: example ? "pitschonix.eu" : $("address").value.trim() || "play.example.net",
     id: example ? "pitschonix" : $("slug").value.trim(),
-    bannerWidth: example ? 150 : Number($("width").value),
-    joins: example ? [] : [...$("joins").children].map(row => row.querySelector("input").value.trim() || "New mode"),
+    bannerWidth: example ? 128 : Number($("width").value),
+    joins: example ? ["XAttack", "Lobby", "FFA", "Duels Legacy", "Duels Modern", "SkyWars Legacy", "SkyWars Modern", "BedWars"] : [...$("joins").children].map(row => row.querySelector("input").value.trim() || "New mode"),
     view: $("view").value, art: images
   });
   $("folder").textContent="minecraft_servers/"+($("slug").value.trim()||"…");
@@ -196,6 +196,16 @@ function manifest(){
       if (modes.some(m => m.name.toLowerCase() === text.toLowerCase())) throw Error("Give each Quick Join a different name.");
       return text;
     });
+    if (destination.value.trim().startsWith("/")) {
+      const server = readField(destination, value => {
+        const match = /^\/server ([a-z0-9][a-z0-9_-]{0,63})$/.exec(value.trim());
+        if (!match) throw Error("Use /server followed by the proxy server ID.");
+        if (modes.some(mode => mode.server === match[1])) throw Error("This proxy server already has a Quick Join.");
+        return match[1];
+      });
+      modes.push({name, server});
+      continue;
+    }
     const address = readField(destination, value => {
       const dest = addr(value), host = dest.split(":")[0];
       if (!hosts.some(h => host === h || host.endsWith("." + h))) throw Error("Use a listed hostname or one of its subdomains.");

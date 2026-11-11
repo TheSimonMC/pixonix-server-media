@@ -35,6 +35,16 @@ class MappingTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.index()
 
+    def test_proxy_joins_are_separate_from_direct_addresses(self):
+        self.mapping["quick_joins"].append(dict(name="FFA", server="ffa-01"))
+        row = self.index()
+        self.assertEqual(row["proxyJoins"], [dict(name="FFA", server="ffa-01")])
+        self.assertEqual(len(row["quickJoins"]), 1)
+        for invalid in ("server ffa-01", "/op player", "ffa\nhelp", ""):
+            self.mapping["quick_joins"][1]["server"] = invalid
+            with self.assertRaises(ValueError):
+                self.index()
+
     def test_reject_foreign_mode_and_unknown_rule(self):
         self.mapping["quick_joins"][0]["address"]="oak.example.somewhere.test"
         with self.assertRaises(ValueError):

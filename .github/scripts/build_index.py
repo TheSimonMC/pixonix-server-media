@@ -69,8 +69,13 @@ def server(folder, root, catalog):
     modes = data.get("quick_joins",[])
     require(isinstance(modes,list) and len(modes)<=12, "Provide quick_joins as a list of up to 12 destinations.")
     if modes:
-        joins = []
+        joins, routes = [], []
         for mode in modes:
+            if set(mode) == {"name", "server"}:
+                backend = mode["server"]
+                require(isinstance(backend, str) and SLUG.fullmatch(backend), "Invalid proxy server ID.")
+                routes.append(dict(name=label(mode["name"],32), server=backend))
+                continue
             require(set(mode)=={"name","address"}, "Each Quick Join must have a name and an address.")
             target = address(mode["address"])
             host = target.split(":")[0]
@@ -79,7 +84,11 @@ def server(folder, root, catalog):
             joins.append(dict(name=label(mode["name"],32), address=target))
         for key in ("name","address"):
             require(len({m[key].casefold() for m in joins}) == len(joins), f"Duplicate Quick Join {key}")
-        row["quickJoins"] = joins
+        names = [m["name"].casefold() for m in joins + routes]
+        require(len(set(names)) == len(names), "Duplicate Quick Join name")
+        require(len({m["server"] for m in routes}) == len(routes), "Duplicate proxy server ID")
+        if joins: row["quickJoins"] = joins
+        if routes: row["proxyJoins"] = routes
     if "policy" in data:
         p = data["policy"]
         require(set(p) <= {"version","modules","options"} and type(p["version"]) is int and p["version"]==1,
