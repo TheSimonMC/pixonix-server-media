@@ -28,6 +28,7 @@ jobs:
         run: |
           python -m unittest discover -s .github/scripts
           python -I .github/scripts/build_index.py --output "$RUNNER_TEMP/index.json"
+          python -I .github/scripts/render_editor.py docs "$RUNNER_TEMP/editor.html"
       - id: release
         if: github.ref == 'refs/heads/main'
         run: |
@@ -38,6 +39,7 @@ jobs:
         run: |
           mkdir public
           cp -r docs/. public/
+          cp "$RUNNER_TEMP/editor.html" public/index.html
           cp -r minecraft_servers public/
           cp "$RUNNER_TEMP/index.json" public/index.json
           echo "$GITHUB_SHA" > public/revision.txt

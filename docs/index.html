@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' blob: data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>Mapping editor Â· Pixonix Server Media</title>
+  <title>Mapping editor · Pixonix Server Media</title>
   <link rel="icon" href="assets/icon.png"><link rel="stylesheet" href="editor.css">
   <script defer src="renderer.js"></script><script defer src="editor.js"></script>
 </head>
 <body>
 <header><div class="wrap mast">
   <a class="brand" href="./"><img width="36" height="36" src="assets/icon.png" alt="">Pixonix <span>Server Media</span></a>
-  <a href="https://github.com/TheSimonMC/pixonix-server-media#submit-a-mapping">Submission guide â†—</a>
+  <a href="https://github.com/TheSimonMC/pixonix-server-media#submit-a-mapping">Submission guide ↗</a>
 </div></header>
 <main class="wrap">
   <div class="heading"><h1>Mapping editor</h1><p>Your draft stays in this tab. Download a ZIP before you leave.</p></div>
@@ -36,9 +36,9 @@
       <section class="panel" hidden id="art"><h2>Artwork</h2><p>Still PNGs only. Each image can be up to 16 MiB, 4,096 pixels per side and 8,388,608 pixels in total.</p>
         <div id="assets"></div>
         <label class="range">Player list banner width <output id="widthValue" for="width">250 px</output><input id="width" type="range" min="80" max="250" value="250"></label>
-        <details class="more"><summary>High-resolution artwork (2Ã—)</summary><div id="hires"></div></details>
+        <details class="more"><summary>High-resolution artwork (2×)</summary><div id="hires"></div></details>
       </section>
-      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Give players a shortcut to a game mode. Use your serverâ€™s hostname or a subdomain that takes them directly there.</p>
+      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Give players a shortcut to a game mode. Use your server’s hostname or a subdomain that takes them directly there.</p>
         <div id="joins"></div><button id="add">+ Add mode</button>
       </section>
       <section class="panel" hidden id="rules"><h2>Mod rules</h2><p>Check a mod to turn it off on your server. Players get their settings back when they leave.</p>
@@ -49,13 +49,13 @@
       <div class="previewhead"><h2 id="preview-title">Client preview</h2><select id="view" aria-label="Preview screen"><option>Server list</option><option value="TAB list">Player list (Tab)</option><option>Quick Joins</option><option>Server logo</option></select></div>
       <div id="stage"><canvas id="scene" width="368" height="212" aria-label="Client preview" role="img"></canvas></div>
       <div class="previewfoot"><label>Preview<select id="source"><option value="draft">Your mapping</option><option value="example">Pitschonix example</option></select></label>
-        <div id="pages" hidden><button id="prev" aria-label="Previous preview page">â€¹</button><button id="next" aria-label="Next preview page">â€º</button></div>
+        <div id="pages" hidden><button id="prev" aria-label="Previous preview page">‹</button><button id="next" aria-label="Next preview page">›</button></div>
       </div>
       <p id="caption"></p>
     </aside>
   </div>
   <section class="export" aria-label="Export mapping">
-    <div class="exportinfo"><img src="assets/folder.svg" alt=""><code id="folder">minecraft_servers/â€¦</code><span id="fileCount">1 file</span></div>
+    <div class="exportinfo"><img src="assets/folder.svg" alt=""><code id="folder">minecraft_servers/…</code><span id="fileCount">1 file</span></div>
     <div class="submit"><label class="consent"><input id="consent" type="checkbox" required><span>I have permission to publish these files and agree to the <a href="https://github.com/TheSimonMC/pixonix-server-media/blob/main/SUBMISSION_TERMS.md" target="_blank" rel="noopener">submission terms</a>. Anyone can download them once I push them to a public fork.</span></label>
     <button class="primary" id="export"><img src="assets/download.svg" alt="">Download ZIP</button></div>
   </section>
