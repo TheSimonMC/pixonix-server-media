@@ -80,7 +80,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Queue mapping submissions for merge after owner approval
+      - name: Queue mapping submissions for merge after maintainer approval
         env:
           GH_TOKEN: ${{ github.token }}
           NUMBER: ${{ github.event.pull_request.number }}

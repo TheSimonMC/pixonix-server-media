@@ -8,12 +8,19 @@ const encoder = new TextEncoder();
 let modules;
 const report = msg => $("status").textContent=msg;
 function selectPanel(id){
+  report("");
   for(const panel of document.querySelectorAll(".panel"))panel.hidden=panel.id!==id;
   for(const b of $("sections").children)b.setAttribute("aria-pressed",String(b.dataset.panel===id));
 }
 for(const b of $("sections").children)b.onclick=()=>selectPanel(b.dataset.panel);
 function asset(kind){return art.get(kind+"@2x.png")??art.get(kind+".png");}
+let pendingPreview = 0;
+function schedulePreview() {
+  if (!pendingPreview) pendingPreview = requestAnimationFrame(preview);
+}
 function preview(){
+  cancelAnimationFrame(pendingPreview);
+  pendingPreview = 0;
   const example = $("source").value === "example";
   const images = {};
   for (const kind of Object.keys(kinds)) {
@@ -32,7 +39,7 @@ function preview(){
   $("fileCount").textContent=(art.size+1)+" file"+(art.size?"s":"");
   $("widthValue").textContent=$("width").value+" px";
 }
-function validFile(file,img){
+function validFile(img){
   if(!img.naturalWidth || Math.max(img.naturalWidth,img.naturalHeight)>4096 || img.naturalWidth*img.naturalHeight>8388608)throw Error("Choose an image with no more than 8,388,608 pixels and no side longer than 4,096 pixels.");
 }
 for(const filename of filenames){
@@ -40,11 +47,14 @@ for(const filename of filenames){
   const picker=make("span"), action=make("span","Choose PNG"), name=make("span","No file selected");
   picker.className="picker"; name.className="filename";
   input.type="file";input.accept="image/png";input.setAttribute("aria-label","Choose PNG for "+label.textContent);
-  picker.append(input,action,name);label.append(picker);row.className="file";row.append(label,clear);$(filename.includes("@") ? "hires" : "assets").append(row);clear.hidden=true;
-  const reset=()=>{drafts.delete(filename);if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);art.delete(filename);input.value="";name.textContent="No file selected";clear.hidden=true;preview();};
+  const feedback=make("small");feedback.id="error-"+filename;feedback.className="file-error";
+  feedback.setAttribute("role","status");input.setAttribute("aria-describedby",feedback.id);
+  picker.append(input,action,name);label.append(picker,feedback);row.className="file";row.append(label,clear);$(filename.includes("@") ? "hires" : "assets").append(row);clear.hidden=true;
+  const reset=()=>{feedback.textContent="";drafts.delete(filename);if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);art.delete(filename);input.value="";name.textContent="No file selected";clear.hidden=true;preview();};
   clear.onclick=reset;
   input.onchange=async()=>{
     const file=input.files[0];if(!file)return;
+    feedback.textContent="";
     const token=Symbol();drafts.set(filename,token);let url;
     try{
       if(file.size>16777216)throw Error("Choose a PNG no larger than 16 MiB.");
@@ -56,13 +66,13 @@ for(const filename of filenames){
         if(bytes.getUint32(pos+4)===0x6163544c)throw Error("Choose a still PNG. This file is animated.");
         pos+=12+n;
       }
-      url=URL.createObjectURL(file);const img=new Image();img.src=url;await img.decode().catch(()=>{throw Error("This PNG could not be opened. Choose another file.");});validFile(file,img);
+      url=URL.createObjectURL(file);const img=new Image();img.src=url;await img.decode().catch(()=>{throw Error("This PNG could not be opened. Choose another file.");});validFile(img);
       if(drafts.get(filename)!==token)return;
       if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);
       art.set(filename,{file,url,data,img});name.textContent=file.name;url=null;clear.hidden=false;report("");
       $("source").value="draft";
       $("view").value=filename.startsWith("banner")?"TAB list":filename.startsWith("logo")?"Server logo":"Server list";
-    }catch(e){if(drafts.get(filename)===token){reset();report(e.message);}}
+    }catch(e){if(drafts.get(filename)===token){input.value="";feedback.textContent=e.message;}}
     finally{if(url)URL.revokeObjectURL(url);if(drafts.get(filename)===token)drafts.delete(filename);preview();}
   };
 }
@@ -131,8 +141,10 @@ $("name").addEventListener("input", () => {
     .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,64);
 });
 document.addEventListener("input",event=>{
-  if (event.target.closest("#identity, #modes, #art")) $("source").value="draft";
-  preview();
+  report("");
+  if (!event.target.closest("#identity, #modes, #art") || event.target.type === "file") return;
+  $("source").value="draft";
+  schedulePreview();
 });
 function addr(raw){
   const label="[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?",s=raw.trim().toLowerCase();
@@ -145,20 +157,53 @@ function title(text,max){
   if(!s||[...s].length>max||/[\p{C}\p{Zl}\p{Zp}]/u.test(s))throw Error("Enter a name between 1 and "+max+" characters long using printable characters.");
   return s;
 }
+function readField(input, parse) {
+  try {
+    return parse(input.value);
+  } catch (error) {
+    selectPanel(input.closest(".panel").id);
+    const details = input.closest("details");
+    if (details) details.open = true;
+    input.focus();
+    input.setCustomValidity(error.message);
+    input.reportValidity();
+    input.setCustomValidity("");
+    throw error;
+  }
+}
 function manifest(){
-  const id=$("slug").value.trim();
-  if(!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(id))throw Error("Start the folder ID with a lowercase letter or number. Use up to 64 lowercase letters, numbers, hyphens, or underscores.");
-  const aliases=$("aliases").value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean).map(addr);
-  const direct=addr($("address").value),addresses=[direct,...aliases];
-  if(addresses.length>64||new Set(addresses).size!==addresses.length)throw Error("List each address only once, with no more than 64 addresses in total.");
-  const result={server_name:id,nice_name:title($("name").value,64),direct_ip:direct,tab_width:Number($("width").value)};
-  if(aliases.length)result.aliases=aliases;
-  const modes=[...$("joins").children].map(r=>{
-    const [n,a]=r.querySelectorAll("input"),dest=addr(a.value),host=dest.split(":")[0];
-    if(!addresses.some(s=>host===s.split(":")[0]||host.endsWith("."+s.split(":")[0])))throw Error("Use a listed hostname or one of its subdomains for each Quick Join.");
-    return {name:title(n.value,32),address:dest};
+  const name = readField($("name"), value => title(value, 64));
+  const direct = readField($("address"), addr);
+  const id = readField($("slug"), value => {
+    value = value.trim();
+    if (!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(value)) throw Error("Start the folder ID with a lowercase letter or number. Use up to 64 lowercase letters, numbers, hyphens or underscores.");
+    return value;
   });
-  for(const key of ["name","address"])if(new Set(modes.map(m=>m[key].toLowerCase())).size!==modes.length)throw Error("Give each Quick Join its own name and server address.");
+  const aliases = readField($("aliases"), value => {
+    const extra = value.split(/\r?\n/).map(s => s.trim()).filter(Boolean).map(addr);
+    const all = [direct, ...extra];
+    if (all.length > 64 || new Set(all).size !== all.length) throw Error("List each address once, with up to 64 addresses in total.");
+    return extra;
+  });
+  const hosts = [direct, ...aliases].map(s => s.split(":")[0]);
+  const result = {server_name:id, nice_name:name, direct_ip:direct, tab_width:Number($("width").value)};
+  if (aliases.length) result.aliases = aliases;
+  const modes = [];
+  for (const row of $("joins").children) {
+    const [label, destination] = row.querySelectorAll("input");
+    const name = readField(label, value => {
+      const text = title(value, 32);
+      if (modes.some(m => m.name.toLowerCase() === text.toLowerCase())) throw Error("Give each Quick Join a different name.");
+      return text;
+    });
+    const address = readField(destination, value => {
+      const dest = addr(value), host = dest.split(":")[0];
+      if (!hosts.some(h => host === h || host.endsWith("." + h))) throw Error("Use a listed hostname or one of its subdomains.");
+      if (modes.some(m => m.address === dest)) throw Error("Give each Quick Join a different address.");
+      return dest;
+    });
+    modes.push({name,address});
+  }
   if(modes.length)result.quick_joins=modes;
   if(denied.size){
     result.policy={version:1,modules:{},options:{}};
@@ -194,6 +239,6 @@ $("export").onclick=()=>{
     for(const [name,a] of art)files.push([base+name,a.data]);
     const url=URL.createObjectURL(zip(files)),a=make("a");a.href=url;a.download=data.server_name+".zip";a.click();
     setTimeout(()=>URL.revokeObjectURL(url),30000);report("Your ZIP is ready. Extract it into your fork, then open a pull request.");
-  }catch(e){report(e.message);$("status").scrollIntoView({block:"nearest"});}
+  }catch(e){report(e.message);}
 };
 preview();

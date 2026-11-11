@@ -8,4 +8,4 @@ Anyone can view, download or fork files in a public repository, including files 
 
 The editor works locally. Previewing a file or exporting a ZIP does not upload it. Publication begins when you push the files to a public fork or repository.
 
-If a submission uses your work without permission, contact the repository owner through [GitHub Issues](https://github.com/TheSimonMC/pixonix-server-media/issues) or use [GitHub’s copyright reporting process](https://docs.github.com/en/site-policy/content-removal-policies/dmca-takedown-policy).
+If a submission uses your work without permission, open a report in [GitHub Issues](https://github.com/TheSimonMC/pixonix-server-media/issues) or use [GitHub’s copyright reporting process](https://docs.github.com/en/site-policy/content-removal-policies/dmca-takedown-policy).

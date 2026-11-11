@@ -14,7 +14,7 @@ const clientPreview = (() => {
     if (!cache.has(path)) {
       const img = new Image();
       cache.set(path, img);
-      img.onload = () => last && preview();
+      img.onload = () => last && schedulePreview();
       img.src = path;
     }
     const img = cache.get(path);
@@ -31,7 +31,16 @@ const clientPreview = (() => {
   }
   function line(text,x,y,color = "#f6f3fc",align = "left",max = Infinity) {
     let output = text;
-    while (output && measure(output)>max) output = Array.from(output).slice(0,-1).join("");
+    if (Number.isFinite(max) && measure(text) > max) {
+      const glyphs = Array.from(text);
+      let low = 0, high = glyphs.length;
+      while (low < high) {
+        const mid = Math.ceil((low + high) / 2);
+        if (measure(glyphs.slice(0,mid).join("")) <= max) low = mid;
+        else high = mid - 1;
+      }
+      output = glyphs.slice(0,low).join("");
+    }
     const length = measure(output);
     if (align === "center") x -= Math.floor(length/2);
     if (align === "right") x -= length;
@@ -92,7 +101,7 @@ const clientPreview = (() => {
     button(center-154,height-52,96,"Join Server");button(center-54,height-52,96,"Quick Join",false,data.joins.length>0);
     button(center+46,height-52,108,"Add to my servers");button(center-154,height-28,152,"Refresh");button(center+2,height-28,152,"Back");
     box(center-178,height-28,20,20,"#322b3f");fit(image("assets/friends.png"),center-176,height-26,16,16);
-    return "The Discover preview uses a sample player count and server message.";
+    return "Player count and server message are examples.";
   }
   function tab(data) {
     terrain();
@@ -109,7 +118,7 @@ const clientPreview = (() => {
       line(name,center-40,row);
       for (let j=0;j<4;j++) rect(center+33+j*2,row+6-j,1,j+1,"#73bf61");
     });
-    return "The player list shows six sample players. You can adjust the banner width under Artwork.";
+    return "Change the banner width in Artwork.";
   }
   function quick(data) {
     terrain();line("Quick Join · "+data.name,center,18,"#ffffff","center",width-12);

@@ -1,60 +1,63 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' blob: data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>Mapping editor · Pixonix Server Media</title>
+  <title>Mapping editor Â· Pixonix Server Media</title>
   <link rel="icon" href="assets/icon.png"><link rel="stylesheet" href="editor.css">
   <script defer src="renderer.js"></script><script defer src="editor.js"></script>
 </head>
 <body>
-<header><div class="wrap mast"><a class="brand" href="./"><img src="assets/icon.png" alt="">Pixonix <span>Server Media</span></a><a href="https://github.com/TheSimonMC/pixonix-server-media#readme">Submission guide ↗</a></div></header>
+<header><div class="wrap mast">
+  <a class="brand" href="./"><img width="36" height="36" src="assets/icon.png" alt="">Pixonix <span>Server Media</span></a>
+  <a href="https://github.com/TheSimonMC/pixonix-server-media#submit-a-mapping">Submission guide â†—</a>
+</div></header>
 <main class="wrap">
-  <div class="heading"><div><h1>Mapping editor</h1><p>Preview your server artwork, set up Quick Joins, and choose mod rules. Your files stay in your browser.</p></div>
-    </div>
-  <p id="status" role="status"></p>
+  <div class="heading"><h1>Mapping editor</h1><p>Your draft stays in this tab. Download a ZIP before you leave.</p></div>
   <div class="workspace">
-    <section class="editor" aria-label="Mapping settings">
-      <nav id="sections" aria-label="Editor sections">
-        <button data-panel="identity" aria-pressed="true"><img src="assets/server.svg" alt="">Server</button>
-        <button data-panel="art"><img src="assets/folder.svg" alt="">Artwork</button>
-        <button data-panel="modes"><img src="assets/swap.svg" alt="">Quick Joins</button>
-        <button data-panel="rules"><img src="assets/shield.svg" alt="">Mod rules</button>
-      </nav>
+    <nav id="sections" aria-label="Mapping settings">
+      <button data-panel="identity" aria-pressed="true" aria-controls="identity"><img src="assets/server.svg" alt="">Server</button>
+      <button data-panel="art" aria-pressed="false" aria-controls="art"><img src="assets/folder.svg" alt="">Artwork</button>
+      <button data-panel="modes" aria-pressed="false" aria-controls="modes"><img src="assets/swap.svg" alt="">Quick Joins</button>
+      <button data-panel="rules" aria-pressed="false" aria-controls="rules"><img src="assets/shield.svg" alt="">Mod rules</button>
+    </nav>
+    <div class="editor">
       <section class="panel" id="identity"><h2>Server details</h2>
-        <label>Display name<input id="name" maxlength="64" placeholder="Your network" autocomplete="off"></label>
+        <label>Display name<input id="name" maxlength="64" placeholder="Your server name" autocomplete="off"></label>
         <label>Java server address<input id="address" placeholder="play.example.net" spellcheck="false">
-          <small>Include the port if your server uses a port other than 25565.</small></label>
+          <small>Include the port if it differs from 25565.</small></label>
         <details class="more"><summary>Folder ID and alternate addresses</summary>
-          <label>Folder ID<input id="slug" maxlength="64" placeholder="your_network" spellcheck="false"></label>
-          <label>Alternate server addresses<textarea id="aliases" rows="3" placeholder="One address per line" spellcheck="false"></textarea></label>
+          <label>Folder ID<input id="slug" maxlength="64" placeholder="your_server" spellcheck="false"><small>Use the existing ID when updating a mapping.</small></label>
+          <label>Alternate addresses<textarea id="aliases" rows="3" placeholder="One address per line" spellcheck="false"></textarea></label>
         </details>
       </section>
-      <section class="panel" hidden id="art"><h2>Artwork</h2><p>Choose still PNGs up to 16 MiB each. Each image can be up to 4,096 pixels wide or tall, with a total limit of 8,388,608 pixels.</p>
-        <div id="assets"></div><details class="more"><summary>High-resolution artwork (2×)</summary><div id="hires"></div></details>
-        <label class="range">Player list banner width <output id="widthValue">250 px</output><input id="width" type="range" min="80" max="250" value="250"></label>
+      <section class="panel" hidden id="art"><h2>Artwork</h2><p>Still PNGs only. Each image can be up to 16 MiB, 4,096 pixels per side and 8,388,608 pixels in total.</p>
+        <div id="assets"></div>
+        <label class="range">Player list banner width <output id="widthValue" for="width">250 px</output><input id="width" type="range" min="80" max="250" value="250"></label>
+        <details class="more"><summary>High-resolution artwork (2Ã—)</summary><div id="hires"></div></details>
       </section>
-      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Add the address players use to join each game mode directly.</p>
-        <div id="joins"></div><button id="add">+ Add mode</button></section>
-      <section class="panel" hidden id="rules"><h2>Mod rules</h2><p>Select the mods you want to disable on your server. For Fullbright, you can also allow Night Vision only. Players keep their own settings when they leave.</p>
-        <label class="search"><input id="filter" type="search" aria-label="Search mods" placeholder="Search mods"></label><div id="policy"></div>
+      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Give players a shortcut to a game mode. Use your serverâ€™s hostname or a subdomain that takes them directly there.</p>
+        <div id="joins"></div><button id="add">+ Add mode</button>
       </section>
-    </section>
+      <section class="panel" hidden id="rules"><h2>Mod rules</h2><p>Check a mod to turn it off on your server. Players get their settings back when they leave.</p>
+        <label class="search"><input id="filter" type="search" aria-label="Search mods" placeholder="Find a mod"></label><div id="policy"></div>
+      </section>
+    </div>
     <aside aria-labelledby="preview-title">
       <div class="previewhead"><h2 id="preview-title">Client preview</h2><select id="view" aria-label="Preview screen"><option>Server list</option><option value="TAB list">Player list (Tab)</option><option>Quick Joins</option><option>Server logo</option></select></div>
       <div id="stage"><canvas id="scene" width="368" height="212" aria-label="Client preview" role="img"></canvas></div>
-      <div class="previewfoot"><label>Show<select id="source"><option value="draft">Your mapping</option><option value="example">Pitschonix example</option></select></label>
-        <div id="pages" hidden><button id="prev" aria-label="Previous preview page">‹</button><button id="next" aria-label="Next preview page">›</button></div></div>
+      <div class="previewfoot"><label>Preview<select id="source"><option value="draft">Your mapping</option><option value="example">Pitschonix example</option></select></label>
+        <div id="pages" hidden><button id="prev" aria-label="Previous preview page">â€¹</button><button id="next" aria-label="Next preview page">â€º</button></div>
+      </div>
       <p id="caption"></p>
     </aside>
   </div>
-  <div class="exportinfo"><img src="assets/folder.svg" alt=""><code id="folder">minecraft_servers/…</code><span id="fileCount">1 file</span></div>
-  <section class="submit-zip" aria-labelledby="export-title">
-    <div><h2 id="export-title">Export your mapping</h2><p>A ZIP stays on your device. Once you push it to a public fork, anyone can view, download or fork the files. You keep the rights you own.</p>
-    <a href="https://github.com/TheSimonMC/pixonix-server-media/blob/main/SUBMISSION_TERMS.md" target="_blank" rel="noopener">Read the submission terms ↗</a>
-    <label class="consent"><input id="consent" type="checkbox" required> I agree to the submission terms and have permission to publish these files.</label></div>
-    <button class="primary" id="export"><img src="assets/download.svg" alt="">Download ZIP</button>
+  <section class="export" aria-label="Export mapping">
+    <div class="exportinfo"><img src="assets/folder.svg" alt=""><code id="folder">minecraft_servers/â€¦</code><span id="fileCount">1 file</span></div>
+    <div class="submit"><label class="consent"><input id="consent" type="checkbox" required><span>I have permission to publish these files and agree to the <a href="https://github.com/TheSimonMC/pixonix-server-media/blob/main/SUBMISSION_TERMS.md" target="_blank" rel="noopener">submission terms</a>. Anyone can download them once I push them to a public fork.</span></label>
+    <button class="primary" id="export"><img src="assets/download.svg" alt="">Download ZIP</button></div>
   </section>
-  <footer>Extract the ZIP into your fork, then open a pull request. <a href="https://github.com/TheSimonMC/pixonix-server-media/fork">Fork on GitHub ↗</a></footer>
+  <p id="status" role="status"></p>
 </main></body></html>
