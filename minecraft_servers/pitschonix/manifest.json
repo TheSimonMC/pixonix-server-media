@@ -2,5 +2,48 @@
   "server_name": "pitschonix",
   "nice_name": "Pitschonix.eu",
   "direct_ip": "pitschonix.eu",
-  "tab_width": 150
+  "tab_width": 128,
+  "policy": {
+    "version": 1,
+    "modules": {
+      "health_indicator": false
+    }
+  },
+  "aliases": [
+    "play.pitschonix.eu"
+  ],
+  "quick_joins": [
+    {
+      "name": "Lobby",
+      "server": "lobby-01"
+    },
+    {
+      "name": "FFA",
+      "server": "ffa-01"
+    },
+    {
+      "name": "Duels Legacy",
+      "server": "duels-legacy-lobby"
+    },
+    {
+      "name": "Duels Modern",
+      "server": "duels-modern-lobby"
+    },
+    {
+      "name": "SkyWars Legacy",
+      "server": "skywars-legacy-lobby"
+    },
+    {
+      "name": "SkyWars Modern",
+      "server": "skywars-modern-lobby"
+    },
+    {
+      "name": "BedWars",
+      "server": "bedwars-legacy-lobby"
+    },
+    {
+      "name": "XAttack",
+      "address": "attack.pitschonix.eu"
+    }
+  ]
 }

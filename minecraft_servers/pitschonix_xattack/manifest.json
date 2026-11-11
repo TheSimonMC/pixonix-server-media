@@ -1,0 +1,11 @@
+{
+  "server_name": "pitschonix_xattack",
+  "nice_name": "Pitschonix XAttack",
+  "direct_ip": "attack.pitschonix.eu",
+  "policy": {
+    "version": 1,
+    "modules": {
+      "health_indicator": false
+    }
+  }
+}

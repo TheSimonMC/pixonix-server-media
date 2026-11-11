@@ -41,6 +41,11 @@ jobs:
           cp -r docs/. public/
           cp "$RUNNER_TEMP/editor.html" public/index.html
           cp -r minecraft_servers public/
+          # Clients can keep the previous catalog for 24 hours.
+          if [[ -d minecraft_servers/pitschonix_xattack && ! -e public/minecraft_servers/pixonix_attack ]]; then
+            mkdir public/minecraft_servers/pixonix_attack
+            find minecraft_servers/pitschonix_xattack -maxdepth 1 -name '*.png' -exec cp {} public/minecraft_servers/pixonix_attack/ \;
+          fi
           cp "$RUNNER_TEMP/index.json" public/index.json
           echo "$GITHUB_SHA" > public/revision.txt
       - if: steps.release.outputs.deploy == 'true'

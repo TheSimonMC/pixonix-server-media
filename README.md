@@ -29,7 +29,7 @@ Use a still PNG for each image. Each file can be up to 16 MiB and 8,388,608 pixe
 
 ## Quick Joins
 
-A Quick Join lets players connect directly to a game mode. For example, add **Duels** with the address `duels.example.net` and configure your server or proxy to send players who join at that address to Duels. You can add up to 12 destinations. Each must use a hostname listed in the mapping or one of its subdomains.
+A Quick Join lets players connect directly to a game mode. For example, add **Duels** with the address `duels.example.net` and configure your server or proxy to send players who join at that address to Duels. For a proxy network, enter a destination such as `/server lobby-01`. The client connects to the network and requests that mode three seconds after joining. You can add up to 12 destinations. A direct address must use a hostname listed in the mapping or one of its subdomains.
 
 ## Mod rules
 
