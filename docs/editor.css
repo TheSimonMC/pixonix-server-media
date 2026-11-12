@@ -66,6 +66,9 @@ summary { color: var(--muted); cursor: pointer }
 summary:hover { color: var(--ink) }
 aside { border-left: 1px solid var(--line); background: var(--rail); align-self: start; position: sticky; top: 0 }
 .previewhead { margin-bottom: 12px }
+#views { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 5px; margin-bottom: 12px }
+#views button { min-height: 38px; padding: 5px 3px; line-height: 1.25 }
+#views button[aria-pressed=true] { background: #362a42; border-color: #9466b0; color: white }
 #stage { border: 3px solid #0b090f; box-shadow: 0 0 0 1px var(--line); line-height: 0; background: var(--field) }
 canvas { display: block; width: 100%; height: auto; image-rendering: pixelated }
 .previewfoot { margin-top: 12px }
@@ -79,8 +82,10 @@ canvas { display: block; width: 100%; height: auto; image-rendering: pixelated }
 .picker span:first-of-type { border: 1px solid #514858; border-radius: 3px; padding: 3px 8px; white-space: nowrap; font-weight: 500 }
 .picker input:focus-visible + span { outline: 2px solid var(--accent) }
 .filename,.exportinfo code { overflow-wrap: anywhere }
-.mode { flex-wrap: wrap; align-items: end }
-.mode label { min-width: min(122px,100%) }
+.mode { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: end; gap: 10px 12px }
+.mode label { min-width: 0 }
+.mode select { display: block; width: 100%; margin-top: 6px; height: 40px }
+.mode button { justify-self: end }
 #add { margin-top: 14px }
 .needs-value::after { content: " *"; color: #ff9696; font-weight: 700 }
 #missing { margin-top: 10px; color: var(--ink); font-size: 14px }
@@ -132,6 +137,8 @@ summary small { margin: 0 0 0 5px; display: inline; color: var(--muted); font-we
   .brand span { padding-left: 9px }
 }
 @media (max-width: 420px) {
+  #views { grid-template-columns: repeat(2,minmax(0,1fr)) }
+  .mode { grid-template-columns: minmax(0,1fr) }
   .mast { gap: 6px; font-size: 12px }
   .brand { gap: 6px; font-size: 15px }.brand span { font-size: 12px }
   .brand img { width: 26px; height: 26px }

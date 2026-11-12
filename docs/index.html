@@ -32,11 +32,11 @@
         <fieldset class="category-group"><legend data-needed="Categories">Categories</legend>
           <small>Choose at least one.</small><div id="categories"></div>
         </fieldset>
-        <details class="more"><summary>Social links <small>Optional</small></summary>
-          <div id="socials"></div>
-        </details>
-        <details class="more"><summary>Folder ID</summary>
+        <details class="more" open><summary>Folder ID</summary>
           <label><span data-needed="Folder ID">Folder ID</span><input id="slug" required maxlength="64" placeholder="your_server" spellcheck="false"><small>Generated from the display name. For an existing mapping, keep its current ID.</small></label>
+        </details>
+        <details class="more" open><summary>Social links <small>Optional</small></summary>
+          <div id="socials"></div>
         </details>
       </section>
       <section class="panel" hidden id="art"><h2>Artwork</h2><p>Still PNGs only. Each image can be up to 16 MiB, 4,096 pixels per side and 8,388,608 pixels in total.</p>
@@ -47,7 +47,7 @@
         </details>
         <details class="more"><summary>High-resolution artwork (2×)</summary><div id="hires"></div></details>
       </section>
-      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Give players a shortcut to a game mode. Enter a direct address or a proxy command such as <code>/server lobby-01</code>.</p>
+      <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Each mode adds a button to your server entry. Choose how players reach it.</p>
         <div id="joins"></div><button id="add">+ Add mode</button>
       </section>
       <section class="panel" hidden id="rules"><h2>Mod rules</h2><p>Check a mod to turn it off on your server. Players get their settings back when they leave.</p>
@@ -55,7 +55,13 @@
       </section>
     </div>
     <aside aria-labelledby="preview-title">
-      <div class="previewhead"><h2 id="preview-title">Client preview</h2><select id="view" aria-label="Preview screen"><option>Server list</option><option value="TAB list">Player list (Tab)</option><option>Quick Joins</option><option>Server logo</option></select></div>
+      <div class="previewhead"><h2 id="preview-title">Client preview</h2></div>
+      <div id="views" role="group" aria-label="Preview screen">
+        <button data-view="Server list" aria-pressed="true">Server list</button>
+        <button data-view="TAB list" aria-pressed="false">Player list</button>
+        <button data-view="Quick Joins" aria-pressed="false">Quick Joins</button>
+        <button data-view="Server logo" aria-pressed="false">Server logo</button>
+      </div>
       <div id="stage"><canvas id="scene" width="368" height="212" aria-label="Client preview" role="img"></canvas></div>
       <div class="previewfoot"><label>Preview<select id="source"><option value="draft">Your mapping</option><option value="example">Pitschonix example</option></select></label>
         <div id="pages" hidden><button id="prev" aria-label="Previous preview page">‹</button><button id="next" aria-label="Next preview page">›</button></div>

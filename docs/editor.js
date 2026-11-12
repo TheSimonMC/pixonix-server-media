@@ -6,6 +6,16 @@ const kinds = {icon:"Server icon", background:"Server list background", banner:"
 const filenames = ["icon.png","background.png","banner.png","icon@2x.png","background@2x.png"];
 const encoder = new TextEncoder();
 let modules;
+let currentView = "Server list";
+function selectView(view) {
+  currentView = view;
+  for (const button of $("views").children) {
+    button.setAttribute("aria-pressed", String(button.dataset.view === view));
+  }
+  clientPreview.resetPage();
+  schedulePreview();
+}
+for (const button of $("views").children) button.onclick = () => selectView(button.dataset.view);
 const report = msg => $("status").textContent=msg;
 function selectPanel(id){
   report("");
@@ -116,8 +126,10 @@ function preview(){
     address: example ? "pitschonix.eu" : $("address").value.trim() || "play.example.net",
     example,
     bannerWidth: example ? 128 : Number($("width").value),
-    joins: example ? ["XAttack", "Lobby", "FFA", "Duels Legacy", "Duels Modern", "SkyWars Legacy", "SkyWars Modern", "BedWars"] : [...$("joins").children].map(row => row.querySelector("input").value.trim() || "New mode"),
-    view: $("view").value, art: images
+    joins: example ? ["XAttack", "Lobby", "FFA", "Duels Legacy", "Duels Modern", "SkyWars Legacy", "SkyWars Modern", "BedWars"] : ["address","server"].flatMap(type =>
+      [...$("joins").children].filter(row => row.querySelector("select").value === type)
+        .map(row => row.querySelector("input").value.trim() || "New mode")),
+    view: currentView, art: images
   });
   $("folder").textContent="minecraft_servers/"+($("slug").value.trim()||"…");
   $("fileCount").textContent=(art.size+1)+" file"+(art.size?"s":"");
@@ -166,7 +178,7 @@ for(const filename of filenames){
       if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);
       art.set(filename,{file,url,data,img});name.textContent=file.name;url=null;clear.hidden=false;report("");
       $("source").value="draft";
-      $("view").value=kind==="banner"?"TAB list":"Server list";
+      selectView(kind==="banner"?"TAB list":"Server list");
     }catch(e){if(drafts.get(filename)===token){input.value="";feedback.textContent=e.message;}}
     finally{if(url)URL.revokeObjectURL(url);if(drafts.get(filename)===token)drafts.delete(filename);missingFields();preview();}
   }
@@ -196,11 +208,31 @@ for (const type of ["dragover","drop"]) {
 $("add").onclick=()=>{
   if($("joins").children.length>=12)return;
   const row=make("div");row.className="mode";
-  for(const [title,placeholder] of [["Mode","FFA"],["Destination","ffa.example.net"]]){
-    const label=make("label"), marker=make("span",title), input=make("input");marker.dataset.needed="Quick Join "+title.toLowerCase();input.required=true;input.placeholder=placeholder;input.maxLength=title==="Mode"?32:260;label.append(marker,input);row.append(label);
+  const nameLabel = make("label"), nameTitle = make("span","Mode"), name = make("input");
+  nameTitle.dataset.needed = "Quick Join name";
+  name.required = true; name.maxLength = 32; name.placeholder = "FFA";
+  nameLabel.append(nameTitle,name);
+  const typeLabel = make("label","Connection"), type = make("select");
+  type.append(new Option("Server address","address"), new Option("Proxy command (/server)","server"));
+  typeLabel.append(type);
+  const targetLabel = make("label"), targetTitle = make("span"), target = make("input");
+  targetTitle.dataset.needed = "Quick Join destination";
+  target.required = true; target.maxLength = 260; target.spellcheck = false;
+  targetLabel.append(targetTitle,target);
+  const values = {address:"",server:""};
+  function updateType() {
+    const proxy = type.value === "server";
+    targetTitle.textContent = proxy ? "Proxy server ID" : "Server address";
+    target.placeholder = proxy ? "ffa-01" : "ffa.example.net";
+    target.value = values[type.value];
+    missingFields(); schedulePreview();
   }
+  target.oninput = () => { values[type.value] = target.value; };
+  type.onchange = updateType;
+  row.append(nameLabel,typeLabel,targetLabel);
+  updateType();
   const remove=make("button","Remove");remove.onclick=()=>{row.remove();$("add").disabled=false;$("add").focus();missingFields();preview();};row.append(remove);$("joins").append(row);missingFields();
-  $("add").disabled=$("joins").children.length===12;$("source").value="draft";$("view").value="Quick Joins";row.querySelector("input").focus();preview();
+  $("add").disabled=$("joins").children.length===12;$("source").value="draft";selectView("Server list");name.focus();preview();
 };
 function ruleControl(mod) {
   if (mod.id === "fullbright") {
@@ -250,7 +282,7 @@ function policies(){
 }
 fetch("modules.json").then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{modules=data.sort((a,b)=>a.name.localeCompare(b.name));policies();}).catch(()=>report("The mod list could not be loaded. Download your draft before reloading the editor."));
 $("filter").oninput=policies;
-$("source").onchange = $("view").onchange = () => { clientPreview.resetPage(); preview(); };
+$("source").onchange = () => { clientPreview.resetPage(); preview(); };
 let customSlug = false;
 $("slug").addEventListener("input", () => { customSlug = Boolean($("slug").value); });
 $("name").addEventListener("input", () => {
@@ -331,10 +363,10 @@ function manifest(){
       if (modes.some(m => m.name.toLowerCase() === text.toLowerCase())) throw Error("Give each Quick Join a different name.");
       return text;
     });
-    if (destination.value.trim().startsWith("/")) {
+    if (row.querySelector("select").value === "server") {
       const server = readField(destination, value => {
-        const match = /^\/server ([a-z0-9][a-z0-9_-]{0,63})$/.exec(value.trim());
-        if (!match) throw Error("Use /server followed by the proxy server ID.");
+        const match = /^(?:\/server +)?([a-z0-9][a-z0-9_-]{0,63})$/.exec(value.trim());
+        if (!match) throw Error("Enter a proxy server ID such as lobby-01.");
         if (modes.some(mode => mode.server === match[1])) throw Error("This proxy server already has a Quick Join.");
         return match[1];
       });

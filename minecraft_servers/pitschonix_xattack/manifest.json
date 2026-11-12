@@ -2,6 +2,15 @@
   "server_name": "pitschonix_xattack",
   "nice_name": "Pitschonix XAttack",
   "direct_ip": "attack.pitschonix.eu",
+  "categories": ["SURVIVAL"],
+  "socials": {
+    "website": "https://pitschonix.eu",
+    "discord": "https://discord.gg/92xE2whxzm",
+    "youtube": "https://www.youtube.com/@Pitschonix",
+    "x": "https://x.com/pitschonix",
+    "instagram": "https://www.instagram.com/pitschonix/",
+    "tiktok": "https://www.tiktok.com/@pitschonix"
+  },
   "policy": {
     "version": 1,
     "modules": {

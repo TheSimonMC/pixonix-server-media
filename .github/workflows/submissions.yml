@@ -51,7 +51,11 @@ jobs:
           test "$(git -C candidate rev-parse FETCH_HEAD)" = "$HEAD_SHA"
           # Materialize only the data directory. The validator always runs from the base commit.
           git -C candidate checkout FETCH_HEAD -- minecraft_servers
-          python -I checker/.github/scripts/build_index.py --root candidate
+          python -I checker/.github/scripts/build_index.py --root candidate --output "$RUNNER_TEMP/candidate.json"
+      - name: Check public Minecraft Java addresses
+        run: |
+          python -I checker/.github/scripts/build_index.py --output "$RUNNER_TEMP/base.json"
+          python -I checker/.github/scripts/check_online.py "$RUNNER_TEMP/base.json" "$RUNNER_TEMP/candidate.json"
 
   result:
     if: always() && !cancelled()

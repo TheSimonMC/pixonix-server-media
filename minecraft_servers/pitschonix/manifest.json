@@ -2,6 +2,15 @@
   "server_name": "pitschonix",
   "nice_name": "Pitschonix.eu",
   "direct_ip": "pitschonix.eu",
+  "categories": ["PVP", "MINIGAMES", "KITPVP", "SURVIVAL", "HG"],
+  "socials": {
+    "website": "https://pitschonix.eu",
+    "discord": "https://discord.gg/92xE2whxzm",
+    "youtube": "https://www.youtube.com/@Pitschonix",
+    "x": "https://x.com/pitschonix",
+    "instagram": "https://www.instagram.com/pitschonix/",
+    "tiktok": "https://www.tiktok.com/@pitschonix"
+  },
   "tab_width": 128,
   "policy": {
     "version": 1,

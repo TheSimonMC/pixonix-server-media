@@ -86,11 +86,11 @@ const clientPreview = (() => {
     const panel = Math.max(100,Math.min(320,width-24)), left = (width-panel)/2;
     const x = left+6, y = 76, w = panel-24;
     box(left,72,panel,height-64-72,"#221d2c");
-    box(x,y,w,48,"#221d2c");
+    box(x,y,w,60,"#221d2c");
     const cavern = data.example;
     const bg = cavern ? image("assets/cavern.webp") : data.art.background;
-    cover(bg || image("assets/fallback.webp"),x+2,y+2,w-4,44,!!bg && !cavern);
-    rect(x+2,y+2,w-4,44,bg ? "rgba(0,0,0,.314)" : "rgba(0,0,0,.22)");
+    cover(bg || image("assets/fallback.webp"),x+2,y+2,w-4,56,!!bg && !cavern);
+    rect(x+2,y+2,w-4,56,bg ? "rgba(0,0,0,.314)" : "rgba(0,0,0,.22)");
     if (data.art.icon) fit(data.art.icon,x,y+2,32,32);
     else fit(image("assets/globe.png"),x+8,y+9,18,18);
     const count = "24 / 100";
@@ -98,6 +98,19 @@ const clientPreview = (() => {
     line(count,x+w-5,y+3,"#beb5c9","right");
     line("Welcome to " + data.name,x+35,y+14,"#dfc7ff","left",w-39);
     line(data.address,x+35,y+23,"#d6d0dc","left",w-39);
+    let buttonX = x+35;
+    for (const [i,name] of data.joins.entries()) {
+      const remaining = data.joins.length-i;
+      const room = x+w-4-buttonX;
+      const reserve = remaining>1 ? 13+measure("+"+(remaining-1)) : 0;
+      const overflow = measure(name)+10+reserve > room;
+      const label = overflow ? "+"+remaining : name, size = measure(label)+10;
+      if (size>room) break;
+      box(buttonX,y+31,size,14,"#322b3f");
+      line(label,buttonX+5,y+34);
+      if (overflow) break;
+      buttonX += size+3;
+    }
     button(center-154,height-52,96,"Join Server");button(center-54,height-52,96,"Quick Join",false,data.joins.length>0);
     button(center+46,height-52,108,"Add to my servers");button(center-154,height-28,152,"Refresh");button(center+2,height-28,152,"Back");
     box(center-178,height-28,20,20,"#322b3f");fit(image("assets/friends.png"),center-176,height-26,16,16);
@@ -133,7 +146,7 @@ const clientPreview = (() => {
       document.getElementById("next").disabled = page === lastPage;
     }
     button(center-102,height-26,204,"Back");
-    return data.joins.length ? "Players see game modes in the order you add them." : "Add a mode under Quick Joins to enable this menu in the client.";
+    return data.joins.length ? "Players can open this list to see every mode." : "Add a mode under Quick Joins to enable this menu in the client.";
   }
   function render(data) {
     last = data;

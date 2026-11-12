@@ -29,6 +29,8 @@ jobs:
           python -m unittest discover -s .github/scripts
           python -I .github/scripts/build_index.py --output "$RUNNER_TEMP/index.json"
           python -I .github/scripts/render_editor.py docs "$RUNNER_TEMP/editor.html"
+          node --check docs/editor.js
+          node --check docs/renderer.js
       - id: release
         if: github.ref == 'refs/heads/main'
         run: |
