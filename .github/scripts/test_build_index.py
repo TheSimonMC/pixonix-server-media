@@ -26,8 +26,37 @@ class MappingTests(unittest.TestCase):
             Image.new("RGBA",(size,size)).save(self.folder/n)
         row = self.index()
         self.assertEqual(row["icon"]["width"],32)
+        self.assertEqual(row["icon"], row["logo"])
         self.assertEqual(row["quickJoins"][0]["address"],"duels.oak.example")
         self.assertFalse(row["policy"]["options"]["fullbright.gamma"])
+
+    def test_separate_legacy_logo(self):
+        Image.new("RGB", (16, 16)).save(self.folder / "icon.png")
+        Image.new("RGB", (32, 32)).save(self.folder / "logo.png")
+        row = self.index()
+        self.assertEqual(row["icon"]["width"], 16)
+        self.assertEqual(row["logo"]["width"], 32)
+
+    def test_categories_and_optional_socials(self):
+        self.mapping["categories"] = ["PVP", "KITPVP"]
+        self.assertNotIn("socials", self.index())
+        self.mapping["socials"] = {"website": "https://oak.example/", "teamspeak": "ts3://ts.oak.example:9987"}
+        row = self.index()
+        for key in ("categories", "socials"):
+            self.assertEqual(row[key], self.mapping[key])
+
+    def test_invalid_categories_and_links(self):
+        for key, value in [
+            ("categories", []), ("categories", ["PVP", "PVP"]), ("categories", ["Other"]),
+            ("socials", {"other": "https://oak.example"}), ("socials", {"x": "ts3://oak.example"}),
+            ("socials", {"discord": "javascript:alert(1)"}), ("socials", {"store": "https://user@oak.example"}),
+            ("socials", {"teamspeak": "ts3://oak.example:70000"}),
+        ]:
+            with self.subTest(value=value):
+                self.mapping[key] = value
+                with self.assertRaises(ValueError):
+                    self.index()
+                del self.mapping[key]
 
     def test_no_duplicate_or_wildcard_addresses(self):
         for alias in ["oak.example:25565","*.oak.example"]:

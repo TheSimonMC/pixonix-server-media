@@ -2,8 +2,8 @@
 const $ = id => document.getElementById(id);
 const make = (tag,text) => Object.assign(document.createElement(tag),{textContent:text??""});
 const art = new Map(), drafts = new Map(), denied = new Set();
-const kinds = {"icon":"Server list icon","background":"Server list background","banner":"Player list banner","logo":"Server logo"};
-const filenames = ["icon.png","background.png","banner.png","logo.png","icon@2x.png","background@2x.png","logo@2x.png"];
+const kinds = {icon:"Server icon", background:"Server list background", banner:"Player list banner"};
+const filenames = ["icon.png","background.png","banner.png","icon@2x.png","background@2x.png"];
 const encoder = new TextEncoder();
 let modules;
 const report = msg => $("status").textContent=msg;
@@ -14,6 +14,89 @@ function selectPanel(id){
 }
 for(const b of $("sections").children)b.onclick=()=>selectPanel(b.dataset.panel);
 function asset(kind){return art.get(kind+"@2x.png")??art.get(kind+".png");}
+function reveal(input) {
+  const panel = input.closest(".panel");
+  if (panel) selectPanel(panel.id);
+  const details = input.closest("details");
+  if (details) details.open = true;
+  input.focus();
+}
+
+function missingFields() {
+  const missing = [];
+  for (const marker of document.querySelectorAll("[data-needed]")) {
+    const group = marker.closest("label, fieldset");
+    const input = group.querySelector("input");
+    let filled;
+    if (group.tagName === "FIELDSET") filled = Boolean(group.querySelector(":checked"));
+    else if (marker.dataset.art) filled = Boolean(asset(marker.dataset.art));
+    else if (input.type === "checkbox") filled = input.checked;
+    else filled = Boolean(input.value.trim());
+    marker.classList.toggle("needs-value", !filled);
+    if (!filled) missing.push({name:marker.dataset.needed, input});
+  }
+  const names = [...new Set(missing.map(field => field.name))];
+  const message = names.length ? "Still needed: " + names.join(", ") + "." : "";
+  if ($("missing").textContent !== message) $("missing").textContent = message;
+  return missing;
+}
+
+function addAddress() {
+  const list = $("aliases"), row = make("div"), label = make("label");
+  const title = make("span", "Alternate address"), input = make("input"), remove = make("button", "Remove");
+  title.dataset.needed = "Alternate address";
+  input.required = true;
+  input.placeholder = "join.example.net";
+  input.spellcheck = false;
+  remove.setAttribute("aria-label", "Remove alternate address");
+  remove.onclick = () => {
+    row.remove();
+    $("add-address").disabled = false;
+    $("add-address").focus();
+    missingFields();
+  };
+  row.className = "alias";
+  label.append(title, input);
+  row.append(label, remove);
+  list.append(row);
+  $("add-address").disabled = list.childElementCount >= 63;
+  input.focus();
+  missingFields();
+}
+$("add-address").onclick = addAddress;
+
+async function loadServerFields() {
+  const response = await fetch("server-fields.json");
+  if (!response.ok) throw Error();
+  const fields = await response.json();
+  $("categories").replaceChildren();
+  $("socials").replaceChildren();
+  for (const [id, name] of Object.entries(fields.categories)) {
+    const label = make("label"), input = make("input");
+    input.type = "checkbox";
+    input.value = id;
+    label.append(input, make("span", name));
+    $("categories").append(label);
+  }
+  for (const [id, [name, example]] of Object.entries(fields.socials)) {
+    const label = make("label", name), input = make("input");
+    input.type = "url";
+    input.dataset.platform = id;
+    input.maxLength = 2048;
+    input.placeholder = example;
+    input.spellcheck = false;
+    label.append(input);
+    $("socials").append(label);
+  }
+}
+function refreshFields() {
+  loadServerFields().catch(() => {
+    const retry = make("button", "Retry");
+    retry.onclick = refreshFields;
+    $("categories").replaceChildren(make("span", "Categories could not be loaded."), retry);
+  });
+}
+refreshFields();
 let pendingPreview = 0;
 function schedulePreview() {
   if (!pendingPreview) pendingPreview = requestAnimationFrame(preview);
@@ -27,10 +110,11 @@ function preview(){
     const file = kind === "banner" ? "banner.png" : kind + "@2x.png";
     images[kind] = example ? clientPreview.image("minecraft_servers/pitschonix/" + file) : asset(kind)?.img;
   }
+  images.logo = example ? clientPreview.image("minecraft_servers/pitschonix/logo@2x.png") : images.icon;
   clientPreview.render({
     name: example ? "Pitschonix.eu" : $("name").value.trim() || "Your network",
     address: example ? "pitschonix.eu" : $("address").value.trim() || "play.example.net",
-    id: example ? "pitschonix" : $("slug").value.trim(),
+    example,
     bannerWidth: example ? 128 : Number($("width").value),
     joins: example ? ["XAttack", "Lobby", "FFA", "Duels Legacy", "Duels Modern", "SkyWars Legacy", "SkyWars Modern", "BedWars"] : [...$("joins").children].map(row => row.querySelector("input").value.trim() || "New mode"),
     view: $("view").value, art: images
@@ -43,17 +127,24 @@ function validFile(img){
   if(!img.naturalWidth || Math.max(img.naturalWidth,img.naturalHeight)>4096 || img.naturalWidth*img.naturalHeight>8388608)throw Error("Choose an image with no more than 8,388,608 pixels and no side longer than 4,096 pixels.");
 }
 for(const filename of filenames){
-  const row=make("div"),label=make("label",kinds[filename.split(/[@.]/)[0]]+(filename.includes("@")?" (2×)":"")), input=make("input"),clear=make("button","Clear");
-  const picker=make("span"), action=make("span","Choose PNG"), name=make("span","No file selected");
+  const kind = filename.split(/[@.]/)[0], hires = filename.includes("@");
+  const row=make("div"),label=make("label"), title=make("span",kinds[kind]+(hires?" (2×)":"")), input=make("input"),clear=make("button","Clear");
+  if (!hires && kind !== "banner") {
+    title.dataset.art = kind;
+    title.dataset.needed = kinds[kind];
+  }
+  label.append(title);
+  if (filename === "icon.png") label.append(make("small","Also used as the server logo."));
+  const picker=make("span"), action=make("span","Choose PNG"), name=make("span","or drop it here");
   picker.className="picker"; name.className="filename";
-  input.type="file";input.accept="image/png";input.setAttribute("aria-label","Choose PNG for "+label.textContent);
+  input.type="file";input.accept="image/png";input.setAttribute("aria-label","Choose PNG for "+title.textContent);
   const feedback=make("small");feedback.id="error-"+filename;feedback.className="file-error";
   feedback.setAttribute("role","status");input.setAttribute("aria-describedby",feedback.id);
-  picker.append(input,action,name);label.append(picker,feedback);row.className="file";row.append(label,clear);$(filename.includes("@") ? "hires" : "assets").append(row);clear.hidden=true;
-  const reset=()=>{feedback.textContent="";drafts.delete(filename);if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);art.delete(filename);input.value="";name.textContent="No file selected";clear.hidden=true;preview();};
+  picker.append(input,action,name);label.append(picker,feedback);row.className="file";row.append(label,clear);$(hires ? "hires" : kind === "banner" ? "banner-art" : "assets").append(row);clear.hidden=true;
+  const reset=()=>{feedback.textContent="";drafts.delete(filename);if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);art.delete(filename);input.value="";name.textContent="or drop it here";clear.hidden=true;missingFields();preview();};
   clear.onclick=reset;
-  input.onchange=async()=>{
-    const file=input.files[0];if(!file)return;
+  async function loadFile(file) {
+    if(!file)return;
     feedback.textContent="";
     const token=Symbol();drafts.set(filename,token);let url;
     try{
@@ -61,6 +152,10 @@ for(const filename of filenames){
       const data=new Uint8Array(await file.arrayBuffer().catch(()=>{throw Error("This file could not be read. Choose it again.");}));
       if([137,80,78,71,13,10,26,10].some((v,i)=>data[i]!==v))throw Error("Select a PNG file.");
       const bytes=new DataView(data.buffer);
+      if (data.length < 33) throw Error("This PNG is incomplete. Choose another file.");
+      const width = bytes.getUint32(16), height = bytes.getUint32(20);
+      if (!width || !height || Math.max(width, height) > 4096 || width * height > 8388608)
+        throw Error("Choose an image with no more than 8,388,608 pixels and no side longer than 4,096 pixels.");
       for(let pos=8;pos+12<=data.length;){
         const n=bytes.getUint32(pos);if(n>data.length-pos-12)throw Error("This PNG is incomplete. Choose another file.");
         if(bytes.getUint32(pos+4)===0x6163544c)throw Error("Choose a still PNG. This file is animated.");
@@ -71,18 +166,40 @@ for(const filename of filenames){
       if(art.has(filename))URL.revokeObjectURL(art.get(filename).url);
       art.set(filename,{file,url,data,img});name.textContent=file.name;url=null;clear.hidden=false;report("");
       $("source").value="draft";
-      $("view").value=filename.startsWith("banner")?"TAB list":filename.startsWith("logo")?"Server logo":"Server list";
+      $("view").value=kind==="banner"?"TAB list":"Server list";
     }catch(e){if(drafts.get(filename)===token){input.value="";feedback.textContent=e.message;}}
-    finally{if(url)URL.revokeObjectURL(url);if(drafts.get(filename)===token)drafts.delete(filename);preview();}
+    finally{if(url)URL.revokeObjectURL(url);if(drafts.get(filename)===token)drafts.delete(filename);missingFields();preview();}
+  }
+  input.onchange = () => loadFile(input.files[0]);
+  picker.ondragover = event => {
+    if (!event.dataTransfer.types.includes("Files")) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    picker.classList.add("dragging");
   };
+  picker.ondragleave = event => {
+    if (!picker.contains(event.relatedTarget)) picker.classList.remove("dragging");
+  };
+  picker.ondrop = event => {
+    event.preventDefault();
+    picker.classList.remove("dragging");
+    const files = event.dataTransfer.files;
+    if (files.length === 1) loadFile(files[0]);
+    else feedback.textContent = "Drop one PNG at a time.";
+  };
+}
+for (const type of ["dragover","drop"]) {
+  document.addEventListener(type, event => {
+    if (event.dataTransfer.types.includes("Files")) event.preventDefault();
+  });
 }
 $("add").onclick=()=>{
   if($("joins").children.length>=12)return;
   const row=make("div");row.className="mode";
   for(const [title,placeholder] of [["Mode","FFA"],["Destination","ffa.example.net"]]){
-    const label=make("label",title), input=make("input");input.placeholder=placeholder;input.maxLength=title==="Mode"?32:260;label.append(input);row.append(label);
+    const label=make("label"), marker=make("span",title), input=make("input");marker.dataset.needed="Quick Join "+title.toLowerCase();input.required=true;input.placeholder=placeholder;input.maxLength=title==="Mode"?32:260;label.append(marker,input);row.append(label);
   }
-  const remove=make("button","Remove");remove.onclick=()=>{row.remove();$("add").disabled=false;preview();};row.append(remove);$("joins").append(row);
+  const remove=make("button","Remove");remove.onclick=()=>{row.remove();$("add").disabled=false;$("add").focus();missingFields();preview();};row.append(remove);$("joins").append(row);missingFields();
   $("add").disabled=$("joins").children.length===12;$("source").value="draft";$("view").value="Quick Joins";row.querySelector("input").focus();preview();
 };
 function ruleControl(mod) {
@@ -142,6 +259,7 @@ $("name").addEventListener("input", () => {
 });
 document.addEventListener("input",event=>{
   report("");
+  missingFields();
   if (!event.target.closest("#identity, #modes, #art") || event.target.type === "file") return;
   $("source").value="draft";
   schedulePreview();
@@ -157,14 +275,22 @@ function title(text,max){
   if(!s||[...s].length>max||/[\p{C}\p{Zl}\p{Zp}]/u.test(s))throw Error("Enter a name between 1 and "+max+" characters long using printable characters.");
   return s;
 }
+function socialLink(platform, value) {
+  const allowed = platform === "teamspeak" ? ["https:", "http:", "ts3:"] : ["https:", "http:"];
+  let url;
+  try { url = new URL(value); } catch { /* Report the expected format below. */ }
+  if (!url || !allowed.includes(url.protocol) || !url.hostname || url.username || url.password ||
+      !/^[a-z][a-z\d+.-]*:\/\/[^/?#@]+(?:[/?#]|$)/i.test(value) ||
+      /[\s\\\p{C}]/u.test(value) || url.href.length > 2048 || url.port === "0") {
+    throw Error(platform === "teamspeak" ? "Enter a full TeamSpeak link, such as ts3://ts.example.net." : "Enter a full link starting with https:// or http://.");
+  }
+  return url.href;
+}
 function readField(input, parse) {
   try {
     return parse(input.value);
   } catch (error) {
-    selectPanel(input.closest(".panel").id);
-    const details = input.closest("details");
-    if (details) details.open = true;
-    input.focus();
+    reveal(input);
     input.setCustomValidity(error.message);
     input.reportValidity();
     input.setCustomValidity("");
@@ -179,15 +305,24 @@ function manifest(){
     if (!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(value)) throw Error("Start the folder ID with a lowercase letter or number. Use up to 64 lowercase letters, numbers, hyphens or underscores.");
     return value;
   });
-  const aliases = readField($("aliases"), value => {
-    const extra = value.split(/\r?\n/).map(s => s.trim()).filter(Boolean).map(addr);
-    const all = [direct, ...extra];
-    if (all.length > 64 || new Set(all).size !== all.length) throw Error("List each address once, with up to 64 addresses in total.");
-    return extra;
-  });
+  const addresses = new Set([direct]);
+  const aliases = [...$("aliases").querySelectorAll("input")].map(input => readField(input, value => {
+    const alias = addr(value);
+    if (addresses.has(alias)) throw Error("This address is already listed.");
+    addresses.add(alias);
+    return alias;
+  }));
   const hosts = [direct, ...aliases].map(s => s.split(":")[0]);
   const result = {server_name:id, nice_name:name, direct_ip:direct, tab_width:Number($("width").value)};
   if (aliases.length) result.aliases = aliases;
+  result.categories = [...$("categories").querySelectorAll(":checked")].map(input => input.value);
+  const socials = {};
+  for (const input of $("socials").querySelectorAll("input")) {
+    if (!input.value.trim()) continue;
+    const platform = input.dataset.platform;
+    socials[platform] = readField(input, value => socialLink(platform, value.trim()));
+  }
+  if (Object.keys(socials).length) result.socials = socials;
   const modes = [];
   for (const row of $("joins").children) {
     const [label, destination] = row.querySelectorAll("input");
@@ -239,16 +374,17 @@ function zip(files){
 $("export").onclick=()=>{
   try{
     if(drafts.size)throw Error("Wait for the artwork preview to finish loading.");
-    const data=manifest(),base="minecraft_servers/"+data.server_name+"/";
-    if (!$("consent").checked) {
-      $("consent").focus();
-      $("consent").reportValidity();
-      return;
+    const [first] = missingFields();
+    if (first) {
+      if (first.input) reveal(first.input);
+      throw Error("Complete the required field: " + first.name + ".");
     }
+    const data=manifest(),base="minecraft_servers/"+data.server_name+"/";
     const files=[[base+"manifest.json",encoder.encode(JSON.stringify(data,null,2)+"\n")]];
     for(const [name,a] of art)files.push([base+name,a.data]);
     const url=URL.createObjectURL(zip(files)),a=make("a");a.href=url;a.download=data.server_name+".zip";a.click();
     setTimeout(()=>URL.revokeObjectURL(url),30000);report("Your ZIP is ready. Extract it into your fork, then open a pull request.");
   }catch(e){report(e.message);}
 };
+missingFields();
 preview();

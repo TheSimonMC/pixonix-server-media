@@ -1,0 +1,19 @@
+{
+  "categories": {
+    "HG": "HG", "PVP": "PvP", "SURVIVAL": "Survival", "CREATIVE": "Creative",
+    "MINIGAMES": "Minigames", "SKYBLOCK": "Skyblock", "PRISON": "Prison",
+    "FACTIONS": "Factions", "UHC": "UHC", "KITPVP": "KitPvP", "ANARCHY": "Anarchy",
+    "RPG": "RPG", "ADVENTURE": "Adventure", "BUILD": "Build", "TECHNICAL": "Technical",
+    "VANILLA": "Vanilla", "MODDED": "Modded", "CUSTOM": "Custom", "CITYBUILD": "CityBuild"
+  },
+  "socials": {
+    "website": ["Website", "https://example.net"],
+    "store": ["Store", "https://store.example.net"],
+    "discord": ["Discord", "https://discord.gg/…"],
+    "youtube": ["YouTube", "https://youtube.com/@…"],
+    "x": ["X", "https://x.com/…"],
+    "instagram": ["Instagram", "https://instagram.com/…"],
+    "tiktok": ["TikTok", "https://tiktok.com/@…"],
+    "teamspeak": ["TeamSpeak", "ts3://ts.example.net"]
+  }
+}

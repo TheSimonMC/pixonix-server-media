@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from PIL import Image
 
@@ -15,6 +16,7 @@ ASSETS = {
 SLUG = re.compile(r"[a-z0-9][a-z0-9_-]{0,63}")
 LABEL = r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?"
 HOST = re.compile(rf"({LABEL}(?:\.{LABEL})+)(?::([1-9][0-9]{{0,4}}))?")
+SERVER_FIELDS = json.loads((ROOT / "docs/server-fields.json").read_text("utf-8"))
 def require(ok, message):
     if not ok:
         raise ValueError(message)
@@ -27,6 +29,15 @@ def address(value):
 def label(value, maximum):
     require(isinstance(value, str) and value.strip() == value and 0 < len(value) <= maximum
             and value.isprintable(), f"Enter a display name between 1 and {maximum} printable characters, with no leading or trailing spaces.")
+    return value
+
+def social_link(platform, value):
+    require(isinstance(value, str) and 0 < len(value) <= 2048 and value.isprintable()
+            and not any(c.isspace() or c == "\\" for c in value), f"Invalid {platform} link.")
+    url = urlsplit(value)
+    schemes = ("http", "https", "ts3") if platform == "teamspeak" else ("http", "https")
+    require(url.scheme in schemes and url.hostname and "@" not in url.netloc and url.port != 0,
+            f"Enter a full {platform} link with a supported scheme and host.")
     return value
 
 def image(path, root):
@@ -56,13 +67,25 @@ def server(folder, root, catalog):
     manifest = files["manifest.json"]
     require(manifest.stat().st_size <= 65536, "Manifest exceeds 64 KiB")
     data = json.loads(manifest.read_text("utf-8-sig"), object_pairs_hook=unique_fields)
-    require(set(data) <= {"server_name","nice_name","direct_ip","aliases","quick_joins","policy","tab_width"}, "Unknown manifest field")
+    require(set(data) <= {"server_name","nice_name","direct_ip","aliases","quick_joins","policy","tab_width","categories","socials"}, "Unknown manifest field")
     require(data["server_name"] == folder.name, "server_name must match the folder name.")
     aliases = data.get("aliases", [])
     require(isinstance(aliases,list) and len(aliases)<64, "Provide aliases as a list of up to 63 alternate addresses.")
     addresses = [address(a) for a in [data["direct_ip"], *aliases]]
     require(len(set(addresses)) == len(addresses), "List each server address only once.")
     row = dict(id=folder.name, name=label(data["nice_name"],64), addresses=addresses)
+    if "categories" in data:
+        categories = data["categories"]
+        require(isinstance(categories, list) and categories and
+                all(isinstance(c, str) and c in SERVER_FIELDS["categories"] for c in categories) and
+                len(set(categories)) == len(categories), "Choose one or more distinct server categories.")
+        row["categories"] = categories
+    if "socials" in data:
+        socials = data["socials"]
+        require(isinstance(socials, dict) and socials.keys() <= SERVER_FIELDS["socials"].keys(),
+                "Unknown social link platform.")
+        if socials:
+            row["socials"] = {key: social_link(key, value) for key, value in socials.items()}
     width = data.get("tab_width",250)
     require(type(width) is int and 80 <= width <= 250, "Set tab_width to a whole number between 80 and 250 pixels.")
     row["tabWidth"] = width
@@ -103,6 +126,10 @@ def server(folder, root, catalog):
             if name in files:
                 metadata = image(files[name],root)
                 row.setdefault(kind, metadata)
+    if "icon" in row:
+        row.setdefault("logo", row["icon"])
+    elif "logo" in row:
+        row["icon"] = row["logo"]
     return row
 
 def build(root):

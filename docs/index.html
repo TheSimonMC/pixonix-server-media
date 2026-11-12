@@ -25,17 +25,26 @@
     </nav>
     <div class="editor">
       <section class="panel" id="identity"><h2>Server details</h2>
-        <label>Display name<input id="name" maxlength="64" placeholder="Your server name" autocomplete="off"></label>
-        <label>Java server address<input id="address" placeholder="play.example.net" spellcheck="false">
+        <label><span data-needed="Display name">Display name</span><input id="name" required maxlength="64" placeholder="Your server name" autocomplete="off"></label>
+        <label><span data-needed="Java server address">Java server address</span><input id="address" required placeholder="play.example.net" spellcheck="false">
           <small>Include the port if it differs from 25565.</small></label>
-        <details class="more"><summary>Folder ID and alternate addresses</summary>
-          <label>Folder ID<input id="slug" maxlength="64" placeholder="your_server" spellcheck="false"><small>Use the existing ID when updating a mapping.</small></label>
-          <label>Alternate addresses<textarea id="aliases" rows="3" placeholder="One address per line" spellcheck="false"></textarea></label>
+        <div id="aliases"></div><button id="add-address">+ Add address</button>
+        <fieldset class="category-group"><legend data-needed="Categories">Categories</legend>
+          <small>Choose at least one.</small><div id="categories"></div>
+        </fieldset>
+        <details class="more"><summary>Social links <small>Optional</small></summary>
+          <div id="socials"></div>
+        </details>
+        <details class="more"><summary>Folder ID</summary>
+          <label><span data-needed="Folder ID">Folder ID</span><input id="slug" required maxlength="64" placeholder="your_server" spellcheck="false"><small>Generated from the display name. For an existing mapping, keep its current ID.</small></label>
         </details>
       </section>
       <section class="panel" hidden id="art"><h2>Artwork</h2><p>Still PNGs only. Each image can be up to 16 MiB, 4,096 pixels per side and 8,388,608 pixels in total.</p>
         <div id="assets"></div>
-        <label class="range">Player list banner width <output id="widthValue" for="width">250 px</output><input id="width" type="range" min="80" max="250" value="250"></label>
+        <details class="more"><summary>Player list banner <small>Optional</small></summary>
+          <div id="banner-art"></div>
+          <label class="range">Display width <output id="widthValue" for="width">250 px</output><input id="width" type="range" min="80" max="250" value="250"></label>
+        </details>
         <details class="more"><summary>High-resolution artwork (2×)</summary><div id="hires"></div></details>
       </section>
       <section class="panel" hidden id="modes"><h2>Quick Joins</h2><p>Give players a shortcut to a game mode. Enter a direct address or a proxy command such as <code>/server lobby-01</code>.</p>
@@ -56,7 +65,8 @@
   </div>
   <section class="export" aria-label="Export mapping">
     <div class="exportinfo"><img src="assets/folder.svg" alt=""><code id="folder">minecraft_servers/…</code><span id="fileCount">1 file</span></div>
-    <div class="submit"><label class="consent"><input id="consent" type="checkbox" required><span>I have permission to publish these files and agree to the <a href="https://github.com/TheSimonMC/pixonix-server-media/blob/main/SUBMISSION_TERMS.md" target="_blank" rel="noopener">submission terms</a>. Anyone can download them once I push them to a public fork.</span></label>
+    <p id="missing" role="status"></p>
+    <div class="submit"><label class="consent"><input id="consent" type="checkbox" required><span><span data-needed="Submission terms">I agree to the <a href="https://github.com/TheSimonMC/pixonix-server-media/blob/main/SUBMISSION_TERMS.md" target="_blank" rel="noopener">submission terms</a></span> and have permission to publish these files. Anyone can download them once I push them to a public fork.</span></label>
     <button class="primary" id="export"><img src="assets/download.svg" alt="">Download ZIP</button></div>
   </section>
   <p id="status" role="status"></p>

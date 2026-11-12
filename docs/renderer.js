@@ -87,7 +87,7 @@ const clientPreview = (() => {
     const x = left+6, y = 76, w = panel-24;
     box(left,72,panel,height-64-72,"#221d2c");
     box(x,y,w,48,"#221d2c");
-    const cavern = data.id === "pitschonix";
+    const cavern = data.example;
     const bg = cavern ? image("assets/cavern.webp") : data.art.background;
     cover(bg || image("assets/fallback.webp"),x+2,y+2,w-4,44,!!bg && !cavern);
     rect(x+2,y+2,w-4,44,bg ? "rgba(0,0,0,.314)" : "rgba(0,0,0,.22)");
@@ -145,8 +145,8 @@ const clientPreview = (() => {
     else {
       rect(0,0,width,height,"#19151e");
       if (data.art.logo) fit(data.art.logo,24,20,width-48,height-40);
-      else line("No logo selected",center,height/2-4,"#c8bed1","center");
-      caption = data.art.logo ? "The preview keeps your logo's original proportions." : "Choose a server logo under Artwork to preview it here.";
+      else line("No icon selected",center,height/2-4,"#c8bed1","center");
+      caption = data.art.logo ? "The preview keeps the image's original proportions." : "Choose a server icon under Artwork to preview it here.";
     }
     document.getElementById("caption").textContent = caption;
     canvas.setAttribute("aria-label",(data.view === "TAB list" ? "Player list" : data.view)+" preview for "+data.name+". "+caption);

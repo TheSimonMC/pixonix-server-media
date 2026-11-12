@@ -6,7 +6,9 @@ A server mapping sets the artwork players see in Pixonix, adds shortcuts to game
 
 [Open the mapping editor](https://thesimonmc.github.io/pixonix-server-media/). Enter your server’s display name and Java address. Include the port if it differs from `25565`. For an existing mapping, keep the same folder ID.
 
-Add artwork, Quick Joins or mod rules as needed. You can switch between the server list, player list and game mode picker in the preview. Your draft stays in the browser tab. Accept the [submission terms](SUBMISSION_TERMS.md) and select **Download ZIP** before closing it.
+Select at least one category and add a server icon and a background. Drop a PNG onto each field or click to choose it. Use **Add address** if players can reach the server under another address. Social links, a player list banner, Quick Joins and mod rules are optional.
+
+Switch views in the client preview to check your artwork. The export section lists any required fields still empty. Your draft stays in the browser tab. Accept the [submission terms](SUBMISSION_TERMS.md) and select **Download ZIP** before closing it.
 
 ## Submit a mapping
 
@@ -20,12 +22,11 @@ A maintainer reviews the submission. Mapping-only pull requests merge after a ma
 
 | File | Where players see it |
 | --- | --- |
-| `icon.png` | Beside the server name in the multiplayer server list |
+| `icon.png` | Beside the server name in the multiplayer server list and wherever Pixonix shows the server logo |
 | `background.png` | Behind the server's entry in the list |
 | `banner.png` | Above the in-game player list (Tab). Choose a display width between 80 and 250 pixels. |
-| `logo.png` | Wherever the client displays a standalone server logo |
 
-Use a still PNG for each image. Each file can be up to 16 MiB and 8,388,608 pixels in total, with a maximum width or height of 4,096 pixels. The icon, background, and logo also support high-resolution versions. If you include both `icon.png` and `icon@2x.png`, for example, the client uses `icon@2x.png`.
+Use a still PNG for each image. Each file can be up to 16 MiB and 8,388,608 pixels in total, with a maximum width or height of 4,096 pixels. Icons and backgrounds also support high-resolution versions. If you include both `icon.png` and `icon@2x.png`, for example, the client uses `icon@2x.png`. Existing mappings with a separate `logo.png` or `logo@2x.png` keep their standalone logo.
 
 ## Quick Joins
 
