@@ -1,2 +1,12 @@
 __pycache__/
 *.pyc
+
+.env
+.env.*
+!.env.example
+!.env.template
+*.key
+*-key.pem
+*.pfx
+*.p12
+/secrets/
